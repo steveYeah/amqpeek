@@ -51,11 +51,13 @@ class SmtpNotifier(Notifier):
         :param from_addr: string
         :param subject: string
         """
+        self.host = host
         self.to_addr = to_addr
         self.from_addr = from_addr
         self.subject = subject
         self.user = user
         self.passwd = passwd
+        self.server = None
 
     def notify(self, subject, message):
         """
@@ -63,7 +65,7 @@ class SmtpNotifier(Notifier):
         :param message: string
         """
         #  @todo - only want to do this once
-        self.server = smtplib.SMTP(host)
+        self.server = smtplib.SMTP(self.host)
 
         #  @todo - only want to do this once
         if self.user is not None:
