@@ -95,20 +95,17 @@ class Monitor(object):
         :param connection: pika.BlockingConnection
         :param queue_details:
         """
-        channel = connection.channel()
+        channel = self.get_channel(connection)
 
         for queue_name, queue_config in queue_details.items():
-            queue = channel.queue_declare(
-                queue=queue_name,
-                **queue_config['settings']
-            )
-            message_count = queue.method.message_count
+            queue = self.connect_to_queue(channel, queue_name, queue_config)
+            message_count = self.get_queue_message_count(queue)
 
             if message_count > queue_config['limit']:
-                subject = 'Queue Error'
+                subject = 'Queue Length Error'
                 message = (
                     'Queue "{queue}" is over specified limit!! '
-                    '({message_count}/{limit})'
+                    '({message_count} > {limit})'
                 ).format(
                     queue=queue_name,
                     message_count=message_count,
@@ -125,3 +122,15 @@ class Monitor(object):
         """
         for notifier in self.notifiers:
             notifier.notify(subject, message)
+
+    def connect_to_queue(self, channel, queue_name, queue_config):
+        return channel.queue_declare(
+            queue=queue_name,
+            **queue_config['settings']
+        )
+
+    def get_channel(self, connection):
+        return connection.channel()
+
+    def get_queue_message_count(self, queue):
+        return queue.method.message_count
