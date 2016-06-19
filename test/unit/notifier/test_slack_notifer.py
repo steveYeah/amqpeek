@@ -19,13 +19,6 @@ class TestSlackNotifier(object):
         with mock.patch('amqpeek.notifier.Slacker'):
             return SlackNotifier(**slack_notifier_args)
 
-    @pytest.fixture
-    def message_args(self):
-        return {
-            'subject': 'Test message',
-            'message': 'This is a test message',
-        }
-
     def test_notify(self, slack_notifier, slack_notifier_args, message_args):
         slack_notifier.notify(
             subject=message_args['subject'],

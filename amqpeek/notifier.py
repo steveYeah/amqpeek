@@ -2,7 +2,7 @@
 Classes for connecting to different channels to send
 notifications
 """
-import smtplib
+from smtplib import SMTP
 
 from slacker import Slacker
 
@@ -64,19 +64,14 @@ class SmtpNotifier(Notifier):
         :param subject: string
         :param message: string
         """
-        #  @todo - only want to do this once
-        self.server = smtplib.SMTP(self.host)
-
-        #  @todo - only want to do this once
-        if self.user is not None:
-            self.server.login(self.user, self.passwd)
+        self.connect()
 
         subject = "{base_subject} - {subject}".format(
             base_subject=self.subject,
             subject=subject
         )
 
-        mail_template.format(
+        mail_message = mail_template.format(
             from_addr=self.from_addr,
             to_addr=", ".join(self.to_addr),
             subject=subject,
@@ -86,8 +81,17 @@ class SmtpNotifier(Notifier):
         self.server.sendmail(
             self.from_addr,
             self.to_addr,
-            message
+            mail_message
         )
+
+    def connect(self):
+        if self.server is not None:
+            return
+
+        self.server = SMTP(self.host)
+
+        if self.user is not None:
+            self.server.login(self.user, self.passwd)
 
 
 class SlackNotifier(Notifier):
