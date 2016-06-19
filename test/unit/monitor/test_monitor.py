@@ -8,14 +8,15 @@ from amqpeek.notifier import Notifier
 
 class TestMonitor(object):
 
-    @pytest.fixture()
+    @pytest.fixture
     def monitor(self):
         monitor = Monitor(
             connector=Mock(),
             queue_details={
                 'test_queue_1': {
                     'settings': {'durable': True},
-                    'limit': 100}
+                    'limit': 100
+                }
             },
             interval=None
         )
