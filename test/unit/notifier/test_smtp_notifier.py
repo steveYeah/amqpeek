@@ -1,10 +1,11 @@
-import mock
+from mock import patch
+
 import pytest
 
 from amqpeek.notifier import SmtpNotifier, mail_template
 
 
-class TestSmtpNotifer(object):
+class TestSmtpNotifier(object):
 
     @pytest.fixture
     def smtp_notifier_args(self):
@@ -19,16 +20,8 @@ class TestSmtpNotifer(object):
 
     @pytest.fixture
     def smtp_notifier(self, smtp_notifier_args):
-        del(smtp_notifier_args['user'])
-        del(smtp_notifier_args['passwd'])
-
-        return SmtpNotifier(**smtp_notifier_args)
-
-    @pytest.fixture
-    def smtp_notifier_auth(self, smtp_notifier_args):
-        return SmtpNotifier(
-            **smtp_notifier_args
-        )
+        with patch('amqpeek.notifier.SMTP'):
+            return SmtpNotifier(**smtp_notifier_args)
 
     @pytest.fixture
     def mail_message(self, smtp_notifier_args, message_args):
@@ -42,37 +35,33 @@ class TestSmtpNotifer(object):
             message=message_args['message']
         )
 
-    def test_notify(self, smtp_notifier, mail_message):
-        with mock.patch('amqpeek.notifier.SMTP'):
-            smtp_notifier.notify(
-                subject='Test message',
-                message='This is a test message'
-            )
-
-            smtp_notifier.server.sendmail.assert_called_once_with(
-                'test_from@test.com',
-                ['test_to@test.com'],
-                mail_message
-            )
-
-            smtp_notifier.server.login.assert_not_called()
-
-    def test_no_login_on_notify(
-        self, smtp_notifier_auth, smtp_notifier_args, mail_message
+    def test_smtp_login_called_when_credentials_present(
+        self, smtp_notifier, smtp_notifier_args
     ):
-        with mock.patch('amqpeek.notifier.SMTP'):
-            smtp_notifier_auth.notify(
-                subject='Test message',
-                message='This is a test message'
-            )
+        smtp_notifier.server.login.assert_called_once_with(
+            smtp_notifier_args['user'],
+            smtp_notifier_args['passwd']
+        )
 
-            smtp_notifier_auth.server.sendmail.assert_called_once_with(
-                'test_from@test.com',
-                ['test_to@test.com'],
-                mail_message
-            )
+    def test_smtp_login_not_called_when_credentials_not_present(
+        self, smtp_notifier_args
+    ):
+        del (smtp_notifier_args['user'])
+        del (smtp_notifier_args['passwd'])
 
-            smtp_notifier_auth.server.login.assert_called_once_with(
-                smtp_notifier_args['user'],
-                smtp_notifier_args['passwd']
-            )
+        with patch('amqpeek.notifier.SMTP'):
+            smtp_notifier = SmtpNotifier(**smtp_notifier_args)
+
+        smtp_notifier.server.login.assert_not_called()
+
+    def test_notify(self, smtp_notifier, mail_message):
+        smtp_notifier.notify(
+            subject='Test message',
+            message='This is a test message'
+        )
+
+        smtp_notifier.server.sendmail.assert_called_once_with(
+            'test_from@test.com',
+            ['test_to@test.com'],
+            mail_message
+        )

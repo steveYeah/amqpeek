@@ -1,4 +1,5 @@
-import mock
+from mock import patch
+
 import pytest
 
 from amqpeek.notifier import SlackNotifier
@@ -16,7 +17,7 @@ class TestSlackNotifier(object):
 
     @pytest.fixture
     def slack_notifier(self, slack_notifier_args):
-        with mock.patch('amqpeek.notifier.Slacker'):
+        with patch('amqpeek.notifier.Slacker'):
             return SlackNotifier(**slack_notifier_args)
 
     def test_notify(self, slack_notifier, slack_notifier_args, message_args):

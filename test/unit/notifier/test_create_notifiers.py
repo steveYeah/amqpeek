@@ -1,9 +1,11 @@
+from mock import patch
+
 import pytest
 
 from amqpeek.notifier import create_notifiers, SmtpNotifier, SlackNotifier
 
 
-class TestNotiferFactory(object):
+class TestNotifierFactory(object):
 
     @pytest.fixture
     def notifier_data(self):
@@ -23,8 +25,13 @@ class TestNotiferFactory(object):
             },
         }
 
-    def test_create_notifers_returns_correct_notifers(self, notifier_data):
-        notifiers = create_notifiers(notifier_data)
+    def test_create_notifiers_returns_correct_notifiers(
+        self, notifier_data
+    ):
+        # We have to patch SMTP as a connection is established on
+        # instantiation
+        with patch('amqpeek.notifier.SMTP'):
+            notifiers = create_notifiers(notifier_data)
 
         assert len(notifiers) == len(notifier_data)
         assert isinstance(notifiers[0], SmtpNotifier)

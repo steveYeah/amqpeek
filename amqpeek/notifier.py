@@ -28,7 +28,7 @@ def create_notifiers(notifier_data):
 
 class Notifier(object):
     """
-    Base Notifer class
+    Base Notifier class
     """
 
     def notify(self, subject, message):
@@ -57,14 +57,16 @@ class SmtpNotifier(Notifier):
         self.subject = subject
         self.user = user
         self.passwd = passwd
-        self.server = None
+        self.server = SMTP(self.host)
+
+        if self.user is not None:
+            self.server.login(self.user, self.passwd)
 
     def notify(self, subject, message):
         """
         :param subject: string
         :param message: string
         """
-        self.connect()
 
         subject = "{base_subject} - {subject}".format(
             base_subject=self.subject,
@@ -83,15 +85,6 @@ class SmtpNotifier(Notifier):
             self.to_addr,
             mail_message
         )
-
-    def connect(self):
-        if self.server is not None:
-            return
-
-        self.server = SMTP(self.host)
-
-        if self.user is not None:
-            self.server.login(self.user, self.passwd)
 
 
 class SlackNotifier(Notifier):
