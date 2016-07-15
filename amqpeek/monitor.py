@@ -4,8 +4,8 @@ Connection and monitoring of RMQ
 import logging
 import time
 
-import pika
-import pika.exceptions
+from pika import PlainCredentials, BlockingConnection, ConnectionParameters
+from pika.exceptions import AMQPConnectionError
 
 
 class Connector(object):
@@ -22,28 +22,23 @@ class Connector(object):
         :param user: string
         :param passwd: string
         """
-        self.conn_params = {
-            'host': host,
-            'port': port,
-            'virtual_host': vhost,
-        }
-
-        if user and passwd:
-            self.conn_params['credentials'] = pika.PlainCredentials(
-                username=user,
-                password=passwd,
-            )
-
-    @property
-    def host(self):
-        """
-        :return: string
-        """
-        return self.conn_params['host']
+        self.host = host
+        self.port = port
+        self.vhost = vhost
+        self.user = user
+        self.passwd = passwd
 
     def connect(self):
-        return pika.BlockingConnection(
-            parameters=pika.ConnectionParameters(**self.conn_params)
+        return BlockingConnection(
+            parameters=ConnectionParameters(
+                host=self.host,
+                port=self.port,
+                virtual_host=self.vhost,
+                credentials=PlainCredentials(
+                    username=self.user,
+                    password=self.passwd,
+                )
+            )
         )
 
 
@@ -73,7 +68,7 @@ class Monitor(object):
         while True:
             try:
                 connection = self.connector.connect()
-            except pika.exceptions.AMQPConnectionError:
+            except AMQPConnectionError:
                 subject = 'Connection Error'
                 message = 'Error connecting to host: "{host}"'.format(
                     host=self.connector.host

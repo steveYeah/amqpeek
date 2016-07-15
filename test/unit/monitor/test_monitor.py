@@ -1,5 +1,6 @@
-import pytest
 from mock import Mock
+
+import pytest
 from pika.exceptions import AMQPConnectionError
 
 from amqpeek.monitor import Monitor
@@ -63,7 +64,9 @@ class TestMonitor(object):
         monitor.notifiers[0].notify.assert_not_called()
 
     def test_run_queue_length_error_sends_correct_notification(self, monitor):
-        monitor.get_queue_message_count = Mock(return_value=101)
+        monitor.get_queue_message_count = Mock(
+            return_value=monitor.queue_details['test_queue_1']['limit'] + 1
+        )
 
         monitor.run()
 
