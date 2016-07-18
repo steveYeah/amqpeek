@@ -47,15 +47,20 @@ class Monitor(object):
     Handles connection to RMQ, test of queues and sending notifications
     """
 
-    def __init__(self, connector, queue_details, interval=None):
+    def __init__(
+        self, connector, queue_details, interval=None, max_connections=None
+    ):
         """
         :param connector: amqpeek.monitor.Connector
         :param queue_details: dict
         :param interval: float
+        :param max_connections: int
         """
         self.connector = connector
         self.queue_details = queue_details
         self.interval = interval
+        self.max_connections = max_connections
+        self.connection_count = 0
         self.notifiers = []
 
     def add_notifier(self, notifier):
@@ -80,10 +85,14 @@ class Monitor(object):
                 self.check_queues(connection, self.queue_details)
                 connection.close()
 
-            if self.interval is None:
-                return
+            if self.interval is not None:
+                time.sleep(self.interval * 60)
+                self.connection_count += 1
 
-            time.sleep(self.interval * 60)
+                if self.connection_count == self.max_connections:
+                    return
+            else:
+                return
 
     def check_queues(self, connection, queue_details):
         """
@@ -128,4 +137,4 @@ class Monitor(object):
         return connection.channel()
 
     def get_queue_message_count(self, queue):
-        return queue.method.message_count
+        return queue.method.message_count  # pragma: no cover

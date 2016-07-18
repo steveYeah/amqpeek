@@ -1,4 +1,4 @@
-from mock import Mock
+from mock import Mock, patch
 
 import pytest
 from pika.exceptions import AMQPConnectionError
@@ -51,6 +51,7 @@ class TestMonitor(object):
 
         monitor.run()
 
+        monitor.get_queue_message_count.assert_called()
         channel_mock.queue_declare.assert_called_once_with(
             queue='test_queue_1',
             durable=True
@@ -74,3 +75,13 @@ class TestMonitor(object):
             'Queue Length Error',
             'Queue "test_queue_1" is over specified limit!! (101 > 100)'
         )
+
+    @patch('amqpeek.monitor.time')
+    def test_run_use_interval(self, time_mock, monitor):
+        monitor.interval = 10
+        monitor.max_connections = 1
+        monitor.get_queue_message_count = Mock(return_value=1)
+
+        monitor.run()
+
+        time_mock.sleep.assert_called_once_with(monitor.interval * 60)

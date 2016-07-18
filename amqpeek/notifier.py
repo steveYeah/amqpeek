@@ -32,7 +32,7 @@ class Notifier(object):
     """
 
     def notify(self, subject, message):
-        pass
+        pass  # pragma: no cover
 
 
 class SmtpNotifier(Notifier):
