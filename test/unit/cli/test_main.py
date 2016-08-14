@@ -1,20 +1,18 @@
 import pytest
-from amqpeek.monitor import Monitor
 from click.testing import CliRunner
-from mock import patch, Mock, DEFAULT
+from mock import patch, Mock
 from pika.exceptions import AMQPConnectionError
 
 from amqpeek.cli import main
+from amqpeek.monitor import Connector, Monitor
 
 
 class TestCli(object):
 
     @pytest.yield_fixture
-    def rabbit_conn_patch(self):
-        with patch('amqpeek.monitor.PlainCredentials'):
-            with patch('amqpeek.monitor.ConnectionParameters'):
-                with patch('amqpeek.monitor.BlockingConnection'):
-                    yield
+    def connector_patch(self):
+        with patch.object(Connector, 'connect'):
+            yield
 
     @pytest.yield_fixture
     def queue_count_patch(self):
@@ -36,7 +34,7 @@ class TestCli(object):
         return CliRunner()
 
     @pytest.mark.usefixtures(
-        'config_file', 'rabbit_conn_patch', 'queue_count_patch'
+        'config_file', 'connector_patch', 'queue_count_patch'
     )
     def test_cli_all_ok_no_notify(self, mock_notifiers, cli_runner):
         result = cli_runner.invoke(main, ['-ctest_config.yaml'])
@@ -45,7 +43,7 @@ class TestCli(object):
         mock_notifiers[0].notify.assert_not_called()
         mock_notifiers[1].notify.assert_not_called()
 
-    @pytest.mark.usefixtures('config_file', 'rabbit_conn_patch')
+    @pytest.mark.usefixtures('config_file', 'connector_patch')
     def test_cli_notify_on_queue_length(
         self, mock_notifiers, queue_count_patch, cli_runner
     ):
@@ -64,7 +62,7 @@ class TestCli(object):
 
     @pytest.mark.usefixtures('config_file')
     def test_cli_notify_on_connection(
-        self, mock_notifiers, queue_count_patch, cli_runner
+        self, mock_notifiers, queue_count_patch, config_data, cli_runner
     ):
         queue_count_patch.return_value = 1
 
@@ -77,11 +75,15 @@ class TestCli(object):
 
         mock_notifiers[0].notify.assert_called_once_with(
             'Connection Error',
-            'Error connecting to host: "192.168.99.100"'
+            'Error connecting to host: "{}"'.format(
+                config_data['rabbit_connection']['host']
+            )
         )
         mock_notifiers[1].notify.assert_called_once_with(
             'Connection Error',
-            'Error connecting to host: "192.168.99.100"'
+            'Error connecting to host: "{}"'.format(
+                config_data['rabbit_connection']['host']
+            )
         )
 
     @patch('amqpeek.monitor.time')
