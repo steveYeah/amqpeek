@@ -52,7 +52,14 @@ def configure_logging(verbosity):
     help='increase verbosity',
     count=True
 )
-def main(config, interval, verbosity):
+@click.option(
+    '--max_tests',
+    '-m',
+    type=int,
+    default=None,
+    help='maximum number of tests to run before stopping'
+)
+def main(config, interval, verbosity, max_tests):
     """
     RabEye - Simple RMQ monitor
     """
@@ -64,7 +71,8 @@ def main(config, interval, verbosity):
     monitor = Monitor(
         connector=connector,
         queue_details=app_config['queues'],
-        interval=interval
+        interval=interval,
+        max_connections=max_tests
     )
 
     notifiers = create_notifiers(app_config['notifiers'])
@@ -76,4 +84,4 @@ def main(config, interval, verbosity):
 
 
 if __name__ == '__main__':
-    main()
+    main()  # pragma: no cover
