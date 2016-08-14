@@ -46,6 +46,6 @@ def config_file(config_data):
     fp.write(yaml.dump(config_data, default_flow_style=False))
     fp.close()
 
-    yield
+    yield test_config_name
 
     os.remove(test_config_name)

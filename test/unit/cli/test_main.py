@@ -33,22 +33,23 @@ class TestCli(object):
     def cli_runner(self):
         return CliRunner()
 
-    @pytest.mark.usefixtures(
-        'config_file', 'connector_patch', 'queue_count_patch'
-    )
-    def test_cli_all_ok_no_notify(self, mock_notifiers, cli_runner):
-        result = cli_runner.invoke(main, ['-ctest_config.yaml'])
+    @pytest.mark.usefixtures('connector_patch', 'queue_count_patch')
+    def test_cli_all_ok_no_notify(
+        self, mock_notifiers, cli_runner,
+        config_file
+    ):
+        result = cli_runner.invoke(main, ['-c{}'.format(config_file)])
 
         assert result.exit_code == 0
         mock_notifiers[0].notify.assert_not_called()
         mock_notifiers[1].notify.assert_not_called()
 
-    @pytest.mark.usefixtures('config_file', 'connector_patch')
+    @pytest.mark.usefixtures('connector_patch')
     def test_cli_notify_on_queue_length(
-        self, mock_notifiers, queue_count_patch, cli_runner
+        self, mock_notifiers, queue_count_patch, cli_runner, config_file
     ):
         queue_count_patch.return_value = 1
-        result = cli_runner.invoke(main, ['-ctest_config.yaml'])
+        result = cli_runner.invoke(main, ['-c{}'.format(config_file)])
 
         assert result.exit_code == 0
         mock_notifiers[0].notify.assert_called_once_with(
@@ -60,16 +61,16 @@ class TestCli(object):
             'Queue "my_queue" is over specified limit!! (1 > 0)'
         )
 
-    @pytest.mark.usefixtures('config_file')
     def test_cli_notify_on_connection(
-        self, mock_notifiers, queue_count_patch, config_data, cli_runner
+        self, mock_notifiers, queue_count_patch, config_data, cli_runner,
+        config_file
     ):
         queue_count_patch.return_value = 1
 
         with patch('amqpeek.monitor.Connector') as connector_mock:
             connector_mock.connect = Mock(side_effect=AMQPConnectionError)
 
-            result = cli_runner.invoke(main, ['-ctest_config.yaml'])
+            result = cli_runner.invoke(main, ['-c{}'.format(config_file)])
 
         assert result.exit_code == 0
 
@@ -87,13 +88,13 @@ class TestCli(object):
         )
 
     @patch('amqpeek.monitor.time')
-    @pytest.mark.usefixtures(
-        'config_file', 'mock_notifiers', 'queue_count_patch'
-    )
-    def test_cli_wait_and_max_connects(self, time_mock, cli_runner):
+    @pytest.mark.usefixtures('mock_notifiers', 'queue_count_patch')
+    def test_cli_wait_and_max_connects(
+        self, time_mock, cli_runner, config_file
+    ):
         result = cli_runner.invoke(
             main,
-            ['-ctest_config.yaml', '-i1', '-m1']
+            ['-c{}'.format(config_file), '-i1', '-m1']
         )
 
         assert result.exit_code == 0
