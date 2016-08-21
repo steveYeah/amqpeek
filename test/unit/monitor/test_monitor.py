@@ -1,6 +1,5 @@
-from mock import Mock, patch
-
 import pytest
+from mock import Mock, patch
 from pika.exceptions import AMQPConnectionError
 
 from amqpeek.monitor import Monitor

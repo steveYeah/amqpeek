@@ -1,6 +1,5 @@
-from mock import patch
-
 import pytest
+from mock import patch
 
 from amqpeek.notifier import SlackNotifier
 

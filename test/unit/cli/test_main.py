@@ -35,8 +35,7 @@ class TestCli(object):
 
     @pytest.mark.usefixtures('connector_patch', 'queue_count_patch')
     def test_cli_all_ok_no_notify(
-        self, mock_notifiers, cli_runner,
-        config_file
+        self, mock_notifiers, cli_runner, config_file
     ):
         result = cli_runner.invoke(main, ['-c{}'.format(config_file)])
 
