@@ -1,0 +1,51 @@
+# RMQ connection details
+# Uncomment credentials and add username and password if required
+rabbit_connection: {
+  #credentials: { user: user, passwd: passwd },
+  user: guest,
+  passwd: guest,
+  host: localhost,
+  port: 5672,
+  vhost: /,
+}
+
+# Queues to monitor.
+#
+# Settings:
+# To connect to queues, we run a declear statement,
+# so add all queue settings here. See:
+# http://pika.readthedocs.io/en/latest/modules/channel.html#pika.channel.Channel.queue_declare
+# for all options used here.
+#
+# limit:
+# max items in queue before notification is sent
+queues:
+  my_queue: {
+      'settings': {'durable': true},
+      'limit': 0
+  }
+
+  my_other_queue: {
+      'settings': {'durable': true},
+      'limit': 0
+  }
+
+# Active notifiers:
+#
+# Currently supported notifers are listed below with example
+# settings
+notifiers:
+  smtp: {
+      host: localhost,
+      user: ~,
+      passwd: ~,
+      from_addr: youremail@example.com,
+      to_addr: [theiremail@example.com],
+      subject: 'AMQPeek - RMQ Monitor'
+  }
+
+  slack: {
+      api_key: your-api-key,
+      username: ampeek,
+      channel: '#general'
+  }
