@@ -2,14 +2,15 @@
 CLI script and main entry point for amqpeek
 """
 import logging
+import os
 
 import click
 import yaml
 
-from notifier import create_notifiers
-from monitor import Connector, Monitor
+from .notifier import create_notifiers
+from .monitor import Connector, Monitor
 
-DEFAULT_CONFIG = 'etc/rabeye-config.yaml'
+DEFAULT_CONFIG = config_path = '{}/.amqpeek/'.format(os.path.expanduser("~"))
 
 
 def read_config(config):
@@ -48,9 +49,9 @@ def configure_logging(verbosity):
 @click.option(
     '--verbosity',
     '-v',
-    default=None,
-    help='increase verbosity',
-    count=True
+    count=True,
+    default=0,
+    help='increase verbosity'
 )
 @click.option(
     '--max_tests',
