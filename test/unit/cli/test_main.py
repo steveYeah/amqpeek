@@ -11,8 +11,8 @@ class TestCli(object):
 
     @pytest.yield_fixture
     def connector_patch(self):
-        with patch.object(Connector, 'connect'):
-            yield
+        with patch.object(Connector, 'connect') as conn:
+            yield conn
 
     @pytest.yield_fixture
     def queue_count_patch(self):
@@ -62,14 +62,12 @@ class TestCli(object):
 
     def test_cli_notify_on_connection(
         self, mock_notifiers, queue_count_patch, config_data, cli_runner,
-        config_file
+        config_file, connector_patch
     ):
         queue_count_patch.return_value = 1
+        connector_patch.side_effect = AMQPConnectionError
 
-        with patch('amqpeek.monitor.Connector') as connector_mock:
-            connector_mock.connect = Mock(side_effect=AMQPConnectionError)
-
-            result = cli_runner.invoke(main, ['-c{}'.format(config_file)])
+        result = cli_runner.invoke(main, ['-c{}'.format(config_file)])
 
         assert result.exit_code == 0
 

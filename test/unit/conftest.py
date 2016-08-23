@@ -10,7 +10,7 @@ def config_data():
         'rabbit_connection': {
             'user': 'guest',
             'passwd': 'guest',
-            'host': '192.168.99.100',
+            'host': 'localhost',
             'port': 5672,
             'vhost': '/',
         },
@@ -22,12 +22,12 @@ def config_data():
         },
         'notifiers': {
             'smtp': {
-                'host': '192.168.99.100',
+                'host': 'localhost',
                 'user': None,
                 'passwd': None,
-                'from_addr': 'hutchinsteve@gmail.com',
-                'to_addr': ['hutchinsteve@gmail.com'],
-                'subject': 'RabEye - RMQ Monitor'
+                'from_addr': 'test@test.com',
+                'to_addr': ['test@yourtest.com'],
+                'subject': 'AMQPeek - RMQ Monitor'
             },
             'slack': {
                 'api_key': 'apikey',
