@@ -1,3 +1,7 @@
+.. image:: https://img.shields.io/travis/steveYeah/amqpeek.svg?branch=master
+   :target: https://travis-ci.org/steveYeah/amqpeek
+
+
 AMQPeek
 =======
 
