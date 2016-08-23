@@ -50,5 +50,20 @@ setup(
         'console_scripts': [
             'amqpeek=amqpeek.cli:main',
         ],
-    }
+    },
+    classifiers=[
+        "Operating System :: MacOS :: MacOS X",
+        "Operating System :: POSIX",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.3",
+        "Programming Language :: Python :: 3.4",
+        "Programming Language :: Python :: 3.5",
+        'Intended Audience :: Developers',
+        'Intended Audience :: System Administrators',
+        'Topic :: System :: Systems Administration',
+        'Topic :: Software Development :: Libraries :: Python Modules',
+    ]
 )
