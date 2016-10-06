@@ -6,14 +6,6 @@ from smtplib import SMTP
 
 from slacker import Slacker
 
-mail_template = """\
-From: {from_addr}
-To: {to_addr}
-Subject: {subject}
-
-{message}
-"""
-
 
 def create_notifiers(notifier_data):
     """
@@ -40,6 +32,14 @@ class SmtpNotifier(Notifier):
     Sends Notifications via SMTP
     """
 
+    MAIL_TEMPLATE = """\
+    From: {from_addr}
+    To: {to_addr}
+    Subject: {subject}
+
+    {message}
+    """
+
     def __init__(
         self, host, to_addr, from_addr, subject, user=None, passwd=None
     ):
@@ -50,6 +50,8 @@ class SmtpNotifier(Notifier):
         :param to_addr: string
         :param from_addr: string
         :param subject: string
+        :param user: string
+        :param: passwd
         """
         self.host = host
         self.to_addr = to_addr
@@ -73,7 +75,7 @@ class SmtpNotifier(Notifier):
             subject=subject
         )
 
-        mail_message = mail_template.format(
+        mail_message = self.MAIL_TEMPLATE.format(
             from_addr=self.from_addr,
             to_addr=", ".join(self.to_addr),
             subject=subject,

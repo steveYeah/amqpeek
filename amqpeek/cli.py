@@ -10,7 +10,7 @@ import yaml
 from .notifier import create_notifiers
 from .monitor import Connector, Monitor
 
-DEFAULT_CONFIG = config_path = '{}/.amqpeek/'.format(os.path.expanduser("~"))
+DEFAULT_CONFIG = '{}/.amqpeek/'.format(os.path.expanduser("~"))
 
 
 def read_config(config):
@@ -82,7 +82,3 @@ def main(config, interval, verbosity, max_tests):
         monitor.add_notifier(notifier)
 
     monitor.run()
-
-
-if __name__ == '__main__':
-    main()  # pragma: no cover

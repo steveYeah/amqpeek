@@ -1,7 +1,7 @@
 import pytest
 from mock import patch
 
-from amqpeek.notifier import SmtpNotifier, mail_template
+from amqpeek.notifier import SmtpNotifier
 
 
 class TestSmtpNotifier(object):
@@ -24,7 +24,7 @@ class TestSmtpNotifier(object):
 
     @pytest.fixture
     def mail_message(self, smtp_notifier_args, message_args):
-        return mail_template.format(
+        return SmtpNotifier.MAIL_TEMPLATE.format(
             from_addr=smtp_notifier_args['from_addr'],
             to_addr=", ".join(smtp_notifier_args['to_addr']),
             subject='{} - {}'.format(

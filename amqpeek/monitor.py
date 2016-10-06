@@ -1,5 +1,5 @@
 """
-Connection and monitoring of RMQ
+Connecting to and monitoring of RMQ
 """
 import logging
 import time
@@ -29,6 +29,11 @@ class Connector(object):
         self.passwd = passwd
 
     def connect(self):
+        """
+        Create blocking connection in RMQ
+
+        :return: pika.BlockingConnection
+        """
         return BlockingConnection(
             parameters=ConnectionParameters(
                 host=self.host,
@@ -70,6 +75,9 @@ class Monitor(object):
         self.notifiers.append(notifier)
 
     def run(self):
+        """
+        Run the monitor
+        """
         while True:
             try:
                 connection = self.connector.connect()
@@ -96,6 +104,8 @@ class Monitor(object):
 
     def check_queues(self, connection, queue_details):
         """
+        Check number of messages in queues are within limits
+
         :param connection: pika.BlockingConnection
         :param queue_details:
         """
@@ -128,13 +138,27 @@ class Monitor(object):
             notifier.notify(subject, message)
 
     def connect_to_queue(self, channel, queue_name, queue_config):
+        """
+        :param: channel: pika.channel.Channel
+        :param: queue_name: string
+        :param: queue_config: dict
+        :return: pika.frame.Method
+        """
         return channel.queue_declare(
             queue=queue_name,
             **queue_config['settings']
         )
 
     def get_channel(self, connection):
+        """
+        :param: connection: pika.BlockingConnection
+        :return: pika.channel.Channel
+        """
         return connection.channel()
 
     def get_queue_message_count(self, queue):
+        """
+        :param: queue: pika.frame.Method
+        :return: int
+        """
         return queue.method.message_count  # pragma: no cover
