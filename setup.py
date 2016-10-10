@@ -34,16 +34,16 @@ setup(
         [(config_path, ['config/amqpeek.yaml'])]
     ),
     install_requires=[
-        'click',
-        'PyYAML',
-        'pika',
-        'slacker',
+        'click>=6.6',
+        'PyYAML>=3.12',
+        'pika>=0.10.0',
+        'slacker>=0.9.25',
     ],
     extras_require={
         'dev': [
-            "pep8",
-            "pytest",
-            "mock",
+            "pep8>=1.7.0",
+            "pytest==3.0.3",
+            "mock==2.0.0",
         ],
     },
     entry_points={
