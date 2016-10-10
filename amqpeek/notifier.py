@@ -6,14 +6,6 @@ from smtplib import SMTP
 
 from slacker import Slacker
 
-mail_template = """\
-From: {from_addr}
-To: {to_addr}
-Subject: {subject}
-
-{message}
-"""
-
 
 def create_notifiers(notifier_data):
     """
@@ -21,8 +13,8 @@ def create_notifiers(notifier_data):
     :return: tuple
     """
     return tuple(
-        NOTIFIER_MAP[notifier_type](**kwargs) for notifier_type, kwargs in
-        notifier_data.items()
+        NOTIFIER_MAP[notifier_type](**kwargs) 
+        for notifier_type, kwargs in notifier_data.items()
     )
 
 
@@ -30,14 +22,23 @@ class Notifier(object):
     """
     Base Notifier class
     """
-
     def notify(self, subject, message):
+        """
+        Send notifications
+        """
         pass  # pragma: no cover
 
 
 class SmtpNotifier(Notifier):
     """
     Sends Notifications via SMTP
+    """
+    MAIL_TEMPLATE = """\
+    From: {from_addr}
+    To: {to_addr}
+    Subject: {subject}
+
+    {message}
     """
 
     def __init__(
@@ -50,6 +51,8 @@ class SmtpNotifier(Notifier):
         :param to_addr: string
         :param from_addr: string
         :param subject: string
+        :param user: string
+        :param: passwd
         """
         self.host = host
         self.to_addr = to_addr
@@ -67,13 +70,12 @@ class SmtpNotifier(Notifier):
         :param subject: string
         :param message: string
         """
-
         subject = "{base_subject} - {subject}".format(
             base_subject=self.subject,
             subject=subject
         )
 
-        mail_message = mail_template.format(
+        mail_message = self.MAIL_TEMPLATE.format(
             from_addr=self.from_addr,
             to_addr=", ".join(self.to_addr),
             subject=subject,
@@ -91,7 +93,6 @@ class SlackNotifier(Notifier):
     """
     Send notifications via Slack
     """
-
     def __init__(self, api_key, username, channel):
         """
         :param api_key: string
