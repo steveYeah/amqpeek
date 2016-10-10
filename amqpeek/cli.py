@@ -62,7 +62,7 @@ def configure_logging(verbosity):
 )
 def main(config, interval, verbosity, max_tests):
     """
-    RabEye - Simple RMQ monitor
+    AMQPeek - Simple, flexible RMQ monitor
     """
     configure_logging(verbosity)
     app_config = read_config(config)

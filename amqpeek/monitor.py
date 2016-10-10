@@ -1,5 +1,5 @@
 """
-Connecting to and monitoring of RMQ
+Connecting to, and monitoring of RMQ
 """
 import logging
 import time
@@ -10,10 +10,10 @@ from pika.exceptions import AMQPConnectionError
 
 class Connector(object):
     """
-    Abstracted connection to RMQ, Holds credentials
-    for continued connection drop and reconnect
-    """
+    Abstracted connection to RMQ.
 
+    Holds credentials for continued connection drop and reconnect
+    """
     def __init__(self, host, port, vhost, user, passwd):
         """
         :param host: string
@@ -51,7 +51,6 @@ class Monitor(object):
     """
     Handles connection to RMQ, test of queues and sending notifications
     """
-
     def __init__(
         self, connector, queue_details, interval=None, max_connections=None
     ):
@@ -76,7 +75,7 @@ class Monitor(object):
 
     def run(self):
         """
-        Run the monitor
+        Main execution loop
         """
         while True:
             try:

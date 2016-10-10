@@ -13,8 +13,8 @@ def create_notifiers(notifier_data):
     :return: tuple
     """
     return tuple(
-        NOTIFIER_MAP[notifier_type](**kwargs) for notifier_type, kwargs in
-        notifier_data.items()
+        NOTIFIER_MAP[notifier_type](**kwargs) 
+        for notifier_type, kwargs in notifier_data.items()
     )
 
 
@@ -22,8 +22,10 @@ class Notifier(object):
     """
     Base Notifier class
     """
-
     def notify(self, subject, message):
+        """
+        Send notifications
+        """
         pass  # pragma: no cover
 
 
@@ -31,7 +33,6 @@ class SmtpNotifier(Notifier):
     """
     Sends Notifications via SMTP
     """
-
     MAIL_TEMPLATE = """\
     From: {from_addr}
     To: {to_addr}
@@ -69,7 +70,6 @@ class SmtpNotifier(Notifier):
         :param subject: string
         :param message: string
         """
-
         subject = "{base_subject} - {subject}".format(
             base_subject=self.subject,
             subject=subject
@@ -93,7 +93,6 @@ class SlackNotifier(Notifier):
     """
     Send notifications via Slack
     """
-
     def __init__(self, api_key, username, channel):
         """
         :param api_key: string
