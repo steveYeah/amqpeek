@@ -96,3 +96,33 @@ class TestCli(object):
 
         assert result.exit_code == 0
         time_mock.sleep.assert_called_once_with(1 * 60)
+
+
+
+
+
+
+
+    def test_cli_no_config(
+        self, mock_notifiers, cli_runner, config_file
+    ):
+        result = cli_runner.invoke(main)
+
+        # mock file check
+
+        assert result.exit_code == 0
+
+        # assert output is correct
+        assert False
+
+    def test_create_config(
+        self, mock_notifiers, cli_runner, config_file
+    ):
+        # mock file check
+        # mock file create
+
+        result = cli_runner.invoke(main. ['-g'])
+
+        # assert output
+
+        assert False

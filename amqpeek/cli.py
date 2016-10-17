@@ -3,6 +3,8 @@ CLI script and main entry point for amqpeek
 """
 import logging
 import os
+import sys
+from shutil import copyfile
 
 import click
 import yaml
@@ -10,7 +12,44 @@ import yaml
 from .notifier import create_notifiers
 from .monitor import Connector, Monitor
 
-DEFAULT_CONFIG = '{}/.amqpeek/'.format(os.path.expanduser("~"))
+DEFAULT_CONFIG = '{}/.amqpeek/amqpeek.yaml'.format(os.path.expanduser("~"))
+
+
+def gen_config_file():
+    dest_path = config_path = '{}/.amqpeek'.format(os.path.expanduser("~"))
+    config_file_name = 'amqpeek.yaml'
+
+    full_dest_path = '{0}/{1}'.format(dest_path, config_file_name)
+
+    if not os.path.exists(full_dest_path):
+        if not os.path.exists(dest_path):
+            os.mkdir(dest_path)
+
+        this_file = os.path.dirname(os.path.realpath(__file__))
+        config_file = '{0}/../config/amqpeek.yaml'.format(this_file)
+        copyfile(config_file, full_dest_path)
+
+        click.echo(
+            click.style(
+                'AMQPeek config created in "{}"'.format(full_dest_path),
+                fg='green'
+            )
+        )
+
+        click.echo(
+            click.style(
+                'Edit file with your details and settings '
+                'before running AMQPeek',
+                fg='green'
+            )
+        )
+    else:
+        click.echo(
+            click.style(
+                'AMQPeek config already exists in {}'.format(full_dest_path),
+                fg='red'
+            )
+        )
 
 
 def read_config(config):
@@ -60,11 +99,22 @@ def configure_logging(verbosity):
     default=None,
     help='maximum number of tests to run before stopping'
 )
-def main(config, interval, verbosity, max_tests):
+@click.option(
+    '--gen_config',
+    '-g',
+    is_flag=True,
+    help='Create a empty config file and place it in you current location'
+)
+def main(config, interval, verbosity, max_tests, gen_config):
     """
     AMQPeek - Simple, flexible RMQ monitor
     """
     configure_logging(verbosity)
+
+    if gen_config:
+        gen_config_file()
+        sys.exit(0)
+
     app_config = read_config(config)
 
     connector = Connector(**app_config['rabbit_connection'])
