@@ -16,29 +16,23 @@ DEFAULT_CONFIG = '{}/.amqpeek/amqpeek.yaml'.format(os.path.expanduser("~"))
 
 
 def gen_config_file():
-    dest_path = config_path = '{}/.amqpeek'.format(os.path.expanduser("~"))
     config_file_name = 'amqpeek.yaml'
 
-    full_dest_path = '{0}/{1}'.format(dest_path, config_file_name)
-
-    if not os.path.exists(full_dest_path):
-        if not os.path.exists(dest_path):
-            os.mkdir(dest_path)
-
+    if not os.path.exists(config_file_name):
         this_file = os.path.dirname(os.path.realpath(__file__))
         config_file = '{0}/../config/amqpeek.yaml'.format(this_file)
-        copyfile(config_file, full_dest_path)
+        copyfile(config_file, config_file_name)
 
         click.echo(
             click.style(
-                'AMQPeek config created in "{}"'.format(full_dest_path),
+                'AMQPeek config created',
                 fg='green'
             )
         )
 
         click.echo(
             click.style(
-                'Edit file with your details and settings '
+                'Edit the file with your details and settings '
                 'before running AMQPeek',
                 fg='green'
             )
@@ -46,7 +40,7 @@ def gen_config_file():
     else:
         click.echo(
             click.style(
-                'AMQPeek config already exists in {}'.format(full_dest_path),
+                'A AMQPeek config already exists in the current directory',
                 fg='red'
             )
         )
@@ -115,7 +109,19 @@ def main(config, interval, verbosity, max_tests, gen_config):
         gen_config_file()
         sys.exit(0)
 
-    app_config = read_config(config)
+    try:
+        app_config = read_config(config)
+    except IOError:
+        click.echo(
+            click.style(
+                'No configuration file found. '
+                'Specify a configuration file with --config. '
+                'To generate a base config file use --gen-config.',
+                fg='red'
+            )
+        )
+
+        sys.exit(0)
 
     connector = Connector(**app_config['rabbit_connection'])
 

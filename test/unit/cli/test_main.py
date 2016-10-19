@@ -97,32 +97,40 @@ class TestCli(object):
         assert result.exit_code == 0
         time_mock.sleep.assert_called_once_with(1 * 60)
 
-
-
-
-
-
-
     def test_cli_no_config(
         self, mock_notifiers, cli_runner, config_file
     ):
         result = cli_runner.invoke(main)
 
-        # mock file check
-
         assert result.exit_code == 0
-
-        # assert output is correct
-        assert False
+        assert result.output == (
+            'No configuration file found. '
+            'Specify a configuration file with --config. '
+            'To generate a base config file use --gen-config.\n'
+        )
 
     def test_create_config(
         self, mock_notifiers, cli_runner, config_file
     ):
-        # mock file check
-        # mock file create
+        with cli_runner.isolated_filesystem():
+            result = cli_runner.invoke(main, ['-g'])
 
-        result = cli_runner.invoke(main. ['-g'])
+        assert result.exit_code == 0
+        assert result.output == (
+            'AMQPeek config created\n'
+            'Edit the file with your details and settings before running '
+            'AMQPeek\n'
+        )
 
-        # assert output
+    def test_create_config_file_exists(
+        self, mock_notifiers, cli_runner, config_file
+    ):
+        with cli_runner.isolated_filesystem():
+            with open('amqpeek.yaml', 'w') as f:
+                f.write('Some config')
+            result = cli_runner.invoke(main, ['-g'])
 
-        assert False
+        assert result.exit_code == 0
+        assert result.output == (
+            'A AMQPeek config already exists in the current directory\n'
+        )
