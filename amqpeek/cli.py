@@ -12,38 +12,16 @@ import yaml
 from .notifier import create_notifiers
 from .monitor import Connector, Monitor
 
-DEFAULT_CONFIG = '{}/.amqpeek/amqpeek.yaml'.format(os.path.expanduser("~"))
+DEFAULT_CONFIG = 'amqpeek.yaml'
 
 
 def gen_config_file():
-    config_file_name = 'amqpeek.yaml'
-
-    if not os.path.exists(config_file_name):
+    if not os.path.exists(DEFAULT_CONFIG):
         this_file = os.path.dirname(os.path.realpath(__file__))
         config_file = '{0}/../config/amqpeek.yaml'.format(this_file)
-        copyfile(config_file, config_file_name)
-
-        click.echo(
-            click.style(
-                'AMQPeek config created',
-                fg='green'
-            )
-        )
-
-        click.echo(
-            click.style(
-                'Edit the file with your details and settings '
-                'before running AMQPeek',
-                fg='green'
-            )
-        )
+        copyfile(config_file, DEFAULT_CONFIG)
     else:
-        click.echo(
-            click.style(
-                'A AMQPeek config already exists in the current directory',
-                fg='red'
-            )
-        )
+        raise IOError('File already exists')
 
 
 def read_config(config):
@@ -106,7 +84,31 @@ def main(config, interval, verbosity, max_tests, gen_config):
     configure_logging(verbosity)
 
     if gen_config:
-        gen_config_file()
+        try:
+            gen_config_file()
+        except IOError:
+            click.echo(
+                click.style(
+                    'A AMQPeek config already exists in the current directory',
+                    fg='red'
+                )
+            )
+        else:
+            click.echo(
+                click.style(
+                    'AMQPeek config created',
+                    fg='green'
+                )
+            )
+
+            click.echo(
+                click.style(
+                    'Edit the file with your details and settings '
+                    'before running AMQPeek',
+                    fg='green'
+                )
+            )
+
         sys.exit(0)
 
     try:

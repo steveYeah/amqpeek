@@ -97,9 +97,11 @@ class TestCli(object):
         assert result.exit_code == 0
         time_mock.sleep.assert_called_once_with(1 * 60)
 
+    @patch('amqpeek.cli.open')
     def test_cli_no_config(
-        self, mock_notifiers, cli_runner, config_file
+        self, open_patch, mock_notifiers, cli_runner, config_file
     ):
+        open_patch.side_effect = IOError
         result = cli_runner.invoke(main)
 
         assert result.exit_code == 0
