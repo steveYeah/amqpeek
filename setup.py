@@ -38,7 +38,7 @@ setup(
         'dev': [
             "pep8",
             "pytest",
-            "mock",
+            "mock=2.0.0",
         ],
     },
     entry_points={
