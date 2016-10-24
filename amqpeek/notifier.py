@@ -13,7 +13,7 @@ def create_notifiers(notifier_data):
     :return: tuple
     """
     return tuple(
-        NOTIFIER_MAP[notifier_type](**kwargs) 
+        NOTIFIER_MAP[notifier_type](**kwargs)
         for notifier_type, kwargs in notifier_data.items()
     )
 
