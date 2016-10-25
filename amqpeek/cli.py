@@ -3,6 +3,8 @@ CLI script and main entry point for amqpeek
 """
 import logging
 import os
+import sys
+from shutil import copyfile
 
 import click
 import yaml
@@ -10,7 +12,16 @@ import yaml
 from .notifier import create_notifiers
 from .monitor import Connector, Monitor
 
-DEFAULT_CONFIG = '{}/.amqpeek/'.format(os.path.expanduser("~"))
+DEFAULT_CONFIG = 'amqpeek.yaml'
+
+
+def gen_config_file():
+    if not os.path.exists(DEFAULT_CONFIG):
+        this_file = os.path.dirname(os.path.realpath(__file__))
+        config_file = '{0}/../config/amqpeek.yaml'.format(this_file)
+        copyfile(config_file, DEFAULT_CONFIG)
+    else:
+        raise IOError('File already exists')
 
 
 def read_config(config):
@@ -60,12 +71,59 @@ def configure_logging(verbosity):
     default=None,
     help='maximum number of tests to run before stopping'
 )
-def main(config, interval, verbosity, max_tests):
+@click.option(
+    '--gen_config',
+    '-g',
+    is_flag=True,
+    help='Create a empty config file and place it in you current location'
+)
+def main(config, interval, verbosity, max_tests, gen_config):
     """
     AMQPeek - Simple, flexible RMQ monitor
     """
     configure_logging(verbosity)
-    app_config = read_config(config)
+
+    if gen_config:
+        try:
+            gen_config_file()
+        except IOError:
+            click.echo(
+                click.style(
+                    'A AMQPeek config already exists in the current directory',
+                    fg='red'
+                )
+            )
+        else:
+            click.echo(
+                click.style(
+                    'AMQPeek config created',
+                    fg='green'
+                )
+            )
+
+            click.echo(
+                click.style(
+                    'Edit the file with your details and settings '
+                    'before running AMQPeek',
+                    fg='green'
+                )
+            )
+
+        sys.exit(0)
+
+    try:
+        app_config = read_config(config)
+    except IOError:
+        click.echo(
+            click.style(
+                'No configuration file found. '
+                'Specify a configuration file with --config. '
+                'To generate a base config file use --gen-config.',
+                fg='red'
+            )
+        )
+
+        sys.exit(0)
 
     connector = Connector(**app_config['rabbit_connection'])
 

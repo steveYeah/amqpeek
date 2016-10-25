@@ -9,8 +9,6 @@ here = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(here, 'README.rst'), 'r', 'utf-8') as handle:
     readme = handle.read()
 
-config_path = '{}/.amqpeek/'.format(os.path.expanduser("~"))
-
 setup(
     name='amqpeek',
     description='RMQ CLI Monitor',
@@ -30,9 +28,6 @@ setup(
         'notifier',
         'notifications'
     ),
-    data_files=(
-        [(config_path, ['config/amqpeek.yaml'])]
-    ),
     install_requires=[
         'click',
         'PyYAML',
@@ -43,7 +38,7 @@ setup(
         'dev': [
             "pep8",
             "pytest",
-            "mock",
+            "mock==2.0.0",
         ],
     },
     entry_points={
