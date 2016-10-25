@@ -20,13 +20,9 @@ def gen_config_file():
     if os.path.exists(DEFAULT_CONFIG):
         raise ConfigExistsError('File already exists')
 
-    try:
-        this_file = os.path.dirname(os.path.realpath(__file__))
-        config_file = '{0}/../config/amqpeek.yaml'.format(this_file)
-        copyfile(config_file, DEFAULT_CONFIG)
-    except IOError as ioe:
-        print('it went bad!')
-        print(ioe)
+    this_file = os.path.dirname(os.path.realpath(__file__))
+    config_file = '{0}/../config/amqpeek.yaml'.format(this_file)
+    copyfile(config_file, DEFAULT_CONFIG)
 
 
 def read_config(config):
