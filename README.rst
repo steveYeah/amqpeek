@@ -10,9 +10,6 @@ AMQPeek
     A flexible RMQ monitor that keeps track of RMQ, notifying you over multiple channels when
     connections cannot be made, and when queue lengths increase beyond specified limits.
 
-
-**Note: not yet released on PyPI. Coming very soon**
-
 Install
 -------
 .. code-block:: shell
