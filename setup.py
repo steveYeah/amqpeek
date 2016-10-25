@@ -29,15 +29,15 @@ setup(
         'notifications'
     ),
     install_requires=[
-        'click',
-        'PyYAML',
-        'pika',
-        'slacker',
+        'click>=6.6',
+        'PyYAML>=3.12',
+        'pika>=0.10.0',
+        'slacker>=0.9.24',
     ],
     extras_require={
         'dev': [
-            "pep8",
             "pytest",
+            "pep8",
             "mock==2.0.0",
         ],
     },

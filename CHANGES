@@ -1,0 +1,13 @@
+Release Notes
+=============
+
+Here you can see the full list of changes between AMQPeek versions. Versions
+are in form of *headline.major.minor* numbers. Backwards-compatible changes
+increment the minor version number only.
+
+Version 0.0.1
+-------------
+
+Released 2016-10-11
+
+* Initial release
