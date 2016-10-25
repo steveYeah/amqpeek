@@ -9,6 +9,7 @@ from shutil import copyfile
 import click
 import yaml
 
+from .exceptions import ConfigExistsError
 from .notifier import create_notifiers
 from .monitor import Connector, Monitor
 
@@ -16,12 +17,16 @@ DEFAULT_CONFIG = 'amqpeek.yaml'
 
 
 def gen_config_file():
-    if not os.path.exists(DEFAULT_CONFIG):
+    if os.path.exists(DEFAULT_CONFIG):
+        raise ConfigExistsError('File already exists')
+
+    try:
         this_file = os.path.dirname(os.path.realpath(__file__))
         config_file = '{0}/../config/amqpeek.yaml'.format(this_file)
         copyfile(config_file, DEFAULT_CONFIG)
-    else:
-        raise IOError('File already exists')
+    except IOError as ioe:
+        print('it went bad!')
+        print(ioe)
 
 
 def read_config(config):
@@ -48,7 +53,10 @@ def configure_logging(verbosity):
     '--config',
     '-c',
     default=DEFAULT_CONFIG,
-    help='Time interval between tests (minutes)'
+    help=(
+        'Location of configuration file to use '
+        '(defaults to "amqpeek.yaml" in current directory)'
+    )
 )
 @click.option(
     '--interval',
@@ -62,20 +70,23 @@ def configure_logging(verbosity):
     '-v',
     count=True,
     default=0,
-    help='increase verbosity'
+    help='Increase verbosity'
 )
 @click.option(
     '--max_tests',
     '-m',
     type=int,
     default=None,
-    help='maximum number of tests to run before stopping'
+    help='Maximum number of tests to run before stopping'
 )
 @click.option(
     '--gen_config',
     '-g',
     is_flag=True,
-    help='Create a empty config file and place it in you current location'
+    help=(
+        'Create a basic configuration file and place it in your '
+        'current directory'
+    )
 )
 def main(config, interval, verbosity, max_tests, gen_config):
     """
@@ -86,7 +97,7 @@ def main(config, interval, verbosity, max_tests, gen_config):
     if gen_config:
         try:
             gen_config_file()
-        except IOError:
+        except ConfigExistsError:
             click.echo(
                 click.style(
                     'A AMQPeek config already exists in the current directory',

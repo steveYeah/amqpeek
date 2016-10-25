@@ -46,6 +46,10 @@ setup(
             'amqpeek=amqpeek.cli:main',
         ],
     },
+    package_dir={'amqpeek': 'amqpeek'},
+    package_data={
+        'amqpeek': ['../config/*.yaml']
+    },
     classifiers=[
         "Operating System :: MacOS :: MacOS X",
         "Operating System :: POSIX",

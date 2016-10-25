@@ -12,6 +12,9 @@ def create_notifiers(notifier_data):
     :param notifier_data: dict
     :return: tuple
     """
+    if not notifier_data:
+        return tuple()
+
     return tuple(
         NOTIFIER_MAP[notifier_type](**kwargs)
         for notifier_type, kwargs in notifier_data.items()
