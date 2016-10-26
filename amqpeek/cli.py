@@ -96,7 +96,8 @@ def main(config, interval, verbosity, max_tests, gen_config):
         except ConfigExistsError:
             click.echo(
                 click.style(
-                    'A AMQPeek config already exists in the current directory',
+                    'An AMQPeek config already exists in the current '
+                    'directory',
                     fg='red'
                 )
             )

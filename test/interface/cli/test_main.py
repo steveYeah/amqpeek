@@ -134,5 +134,5 @@ class TestCli(object):
 
         assert result.exit_code == 0
         assert result.output == (
-            'A AMQPeek config already exists in the current directory\n'
+            'An AMQPeek config already exists in the current directory\n'
         )
