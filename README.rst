@@ -26,7 +26,7 @@ To create a base configuration file:
 
     $ amqpeek --gen_config
 
-This will create a file called `amqpeek.yaml in you current directory. Here you
+This will create a file called ``amqpeek.yaml`` in you current directory. Here you
 can setup your connection details for RMQ, define queues you wish to monitor
 and define the notifier channels you wish to use. Edit this file to suit your
 needs
