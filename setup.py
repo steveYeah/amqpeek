@@ -13,7 +13,7 @@ setup(
     name='amqpeek',
     description='RMQ CLI Monitor',
     packages=find_packages(exclude=['test', 'test.*']),
-    version='0.0.1',
+    version='0.0.2',
     long_description=readme,
     license="MIT",
     author='Steve Hutchins',
