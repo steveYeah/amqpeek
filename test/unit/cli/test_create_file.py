@@ -5,6 +5,7 @@ from mock import patch
 
 from amqpeek import cli
 from amqpeek.cli import gen_config_file
+from amqpeek.exceptions import ConfigExistsError
 
 
 class TestGenConfigFile:
@@ -13,7 +14,7 @@ class TestGenConfigFile:
     def test_file_already_exists(self, path_exists_patch):
         path_exists_patch.return_value = True
 
-        with pytest.raises(IOError):
+        with pytest.raises(ConfigExistsError):
             gen_config_file()
 
     @patch('amqpeek.cli.os.path.exists')
