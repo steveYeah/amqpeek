@@ -126,7 +126,7 @@ def main(config, interval, verbosity, max_tests, gen_config):
             click.style(
                 'No configuration file found. '
                 'Specify a configuration file with --config. '
-                'To generate a base config file use --gen-config.',
+                'To generate a base config file use --gen_config.',
                 fg='red'
             )
         )
