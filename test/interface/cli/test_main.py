@@ -108,7 +108,7 @@ class TestCli(object):
         assert result.output == (
             'No configuration file found. '
             'Specify a configuration file with --config. '
-            'To generate a base config file use --gen-config.\n'
+            'To generate a base config file use --gen_config.\n'
         )
 
     def test_create_config(
