@@ -14,7 +14,6 @@ class TestMonitor(object):
             connector=Mock(),
             queue_details={
                 'test_queue_1': {
-                    'settings': {'durable': True},
                     'limit': 100
                 }
             },
@@ -54,7 +53,6 @@ class TestMonitor(object):
         channel_mock.queue_declare.assert_called_once_with(
             queue='test_queue_1',
             passive=True,
-            durable=True
         )
 
     def test_run_no_errors_found_do_not_notify(self, monitor):

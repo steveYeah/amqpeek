@@ -112,9 +112,7 @@ class Monitor(object):
 
         for queue_name, queue_config in queue_details.items():
             try:
-                queue = self.connect_to_queue(
-                    channel, queue_name, queue_config
-                )
+                queue = self.connect_to_queue(channel, queue_name)
             except ChannelClosed:
                 subject = 'Queue does not exist'
                 message = (
@@ -150,17 +148,16 @@ class Monitor(object):
         for notifier in self.notifiers:
             notifier.notify(subject, message)
 
-    def connect_to_queue(self, channel, queue_name, queue_config):
+    def connect_to_queue(self, channel, queue_name):
         """
         :param: channel: pika.channel.Channel
         :param: queue_name: string
-        :param: queue_config: dict
         :return: pika.frame.Method
+        :raises: pika.ChannelClosed
         """
         return channel.queue_declare(
             queue=queue_name,
             passive=True,
-            **queue_config['settings']
         )
 
     def get_channel(self, connection):
