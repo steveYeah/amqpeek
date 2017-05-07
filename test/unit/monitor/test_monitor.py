@@ -1,6 +1,6 @@
 import pytest
 from mock import Mock, patch
-from pika.exceptions import AMQPConnectionError
+from pika.exceptions import AMQPConnectionError, ChannelClosed
 
 from amqpeek.monitor import Monitor
 from amqpeek.notifier import Notifier
@@ -14,7 +14,6 @@ class TestMonitor(object):
             connector=Mock(),
             queue_details={
                 'test_queue_1': {
-                    'settings': {'durable': True},
                     'limit': 100
                 }
             },
@@ -53,7 +52,7 @@ class TestMonitor(object):
         monitor.get_queue_message_count.assert_called()
         channel_mock.queue_declare.assert_called_once_with(
             queue='test_queue_1',
-            durable=True
+            passive=True,
         )
 
     def test_run_no_errors_found_do_not_notify(self, monitor):
@@ -73,6 +72,16 @@ class TestMonitor(object):
         monitor.notifiers[0].notify.assert_called_once_with(
             'Queue Length Error',
             'Queue "test_queue_1" is over specified limit!! (101 > 100)'
+        )
+
+    def test_run_queue_not_declared_send_correct_notifcation(self, monitor):
+        monitor.connect_to_queue = Mock(side_effect=ChannelClosed)
+
+        monitor.run()
+
+        monitor.notifiers[0].notify.assert_called_once_with(
+            'Queue does not exist',
+            'Queue "test_queue_1" has not been declared'
         )
 
     @patch('amqpeek.monitor.time')

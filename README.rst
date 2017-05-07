@@ -8,7 +8,8 @@ AMQPeek
 .. pull-quote::
 
     A flexible RMQ monitor that keeps track of RMQ, notifying you over multiple channels when
-    connections cannot be made, and when queue lengths increase beyond specified limits.
+    connections cannot be made, queues have not been declared, and when queue
+    lengths increase beyond specified limits.
 
 Install
 -------
