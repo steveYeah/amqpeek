@@ -5,7 +5,7 @@ import logging
 import time
 
 from pika import PlainCredentials, BlockingConnection, ConnectionParameters
-from pika.exceptions import AMQPConnectionError
+from pika.exceptions import AMQPConnectionError, ChannelClosed
 
 
 class Connector(object):
@@ -111,7 +111,21 @@ class Monitor(object):
         channel = self.get_channel(connection)
 
         for queue_name, queue_config in queue_details.items():
-            queue = self.connect_to_queue(channel, queue_name, queue_config)
+            try:
+                queue = self.connect_to_queue(
+                    channel, queue_name, queue_config
+                )
+            except ChannelClosed:
+                subject = 'Queue does not exist'
+                message = (
+                    'Queue "{queue}" has not been declared'
+                ).format(queue=queue_name)
+
+                logging.info('%s - %s', subject, message)
+                self.notify(subject, message)
+
+                return
+
             message_count = self.get_queue_message_count(queue)
 
             if message_count > queue_config['limit']:
@@ -145,6 +159,7 @@ class Monitor(object):
         """
         return channel.queue_declare(
             queue=queue_name,
+            passive=True,
             **queue_config['settings']
         )
 
