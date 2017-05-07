@@ -5,6 +5,16 @@ Here you can see the full list of changes between AMQPeek versions. Versions
 are in form of *headline.major.minor* numbers. Backwards-compatible changes
 increment the minor version number only.
 
+Version 0.0.2
+-------------
+
+Released 2016-10-30
+
+* Config file no longer added to home directory on install
+* Config generated on demand
+* Default config location changed to current working directory
+* Other tidy ups
+
 Version 0.0.1
 -------------
 
