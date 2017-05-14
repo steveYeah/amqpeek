@@ -110,7 +110,7 @@ class Monitor(object):
         """
         channel = self.get_channel(connection)
 
-        for queue_name, queue_config in queue_details.items():
+        for queue_name, queue_limit in queue_details:
             try:
                 queue = self.connect_to_queue(channel, queue_name)
             except ChannelClosed:
@@ -122,11 +122,11 @@ class Monitor(object):
                 logging.info('%s - %s', subject, message)
                 self.notify(subject, message)
 
-                return
+                continue
 
             message_count = self.get_queue_message_count(queue)
 
-            if message_count > queue_config['limit']:
+            if message_count > queue_limit:
                 subject = 'Queue Length Error'
                 message = (
                     'Queue "{queue}" is over specified limit!! '
@@ -134,7 +134,7 @@ class Monitor(object):
                 ).format(
                     queue=queue_name,
                     message_count=message_count,
-                    limit=queue_config['limit']
+                    limit=queue_limit
                 )
 
                 logging.info('%s - %s', subject, message)

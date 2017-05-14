@@ -12,11 +12,7 @@ class TestMonitor(object):
     def monitor(self):
         monitor = Monitor(
             connector=Mock(),
-            queue_details={
-                'test_queue_1': {
-                    'limit': 100
-                }
-            },
+            queue_details=[('test_queue_1', 100)],
             interval=None
         )
 
@@ -64,7 +60,8 @@ class TestMonitor(object):
 
     def test_run_queue_length_error_sends_correct_notification(self, monitor):
         monitor.get_queue_message_count = Mock(
-            return_value=monitor.queue_details['test_queue_1']['limit'] + 1
+            # the limit of test_queue_one + 1
+            return_value=monitor.queue_details[0][1] + 1
         )
 
         monitor.run()

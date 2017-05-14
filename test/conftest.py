@@ -20,6 +20,10 @@ def config_data():
                 'limit': 0
             }
         },
+        'queue_limits': {
+            0: ['my_queue'],
+            1: ['my_other_queue'],
+        },
         'notifiers': {
             'smtp': {
                 'host': 'localhost',
