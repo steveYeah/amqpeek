@@ -44,6 +44,23 @@ def configure_logging(verbosity):
         logging.basicConfig(format="%(message)s", level=logging.ERROR)
 
 
+def build_queue_data(app_config):
+    queue_config = []
+    config_queues = app_config.get('queues')
+    queue_limits = app_config.get('queue_limits')
+
+    if config_queues:
+        for queue_name, dets in config_queues.items():
+            queue_config.append((queue_name, dets['limit']))
+
+    if queue_limits:
+        for limit, queues in queue_limits.items():
+            for queue_name in queues:
+                queue_config.append((queue_name, limit))
+
+    return set(queue_config)
+
+
 @click.command()
 @click.option(
     '--config',
@@ -135,9 +152,11 @@ def main(config, interval, verbosity, max_tests, gen_config):
 
     connector = Connector(**app_config['rabbit_connection'])
 
+    queue_config = build_queue_data(app_config)
+
     monitor = Monitor(
         connector=connector,
-        queue_details=app_config['queues'],
+        queue_details=queue_config,
         interval=interval,
         max_connections=max_tests
     )

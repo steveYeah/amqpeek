@@ -1,9 +1,6 @@
-import os
-
 import pytest
 from mock import patch
 
-from amqpeek import cli
 from amqpeek.cli import gen_config_file
 from amqpeek.exceptions import ConfigExistsError
 

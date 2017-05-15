@@ -9,6 +9,9 @@ rabbit_connection: {
 
 # Queues to monitor.
 #
+# Define a queue you wish to monitor and the warning limit of that queue
+# An alternative to defining queues is queue_limits below.
+#
 # limit:
 # max items in queue before notification is sent
 queues:
@@ -19,6 +22,19 @@ queues:
   my_other_queue: {
       'limit': 0
   }
+
+# Limits and associated queues.
+#
+# Define a number of queues grouped by limit.
+#
+# key:
+# max items in queue before notification is sent
+#
+# value:
+# list of queue names to apply the limit to
+queue_limits:
+  10: ['my_queue']
+  100: ['my_other_queue']
 
 # Active notifiers:
 #
