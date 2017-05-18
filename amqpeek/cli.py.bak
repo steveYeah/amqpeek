@@ -50,11 +50,11 @@ def build_queue_data(app_config):
     queue_limits = app_config.get('queue_limits')
 
     if config_queues:
-        for queue_name, dets in list(config_queues.items()):
+        for queue_name, dets in config_queues.items():
             queue_config.append((queue_name, dets['limit']))
 
     if queue_limits:
-        for limit, queues in list(queue_limits.items()):
+        for limit, queues in queue_limits.items():
             for queue_name in queues:
                 queue_config.append((queue_name, limit))
 

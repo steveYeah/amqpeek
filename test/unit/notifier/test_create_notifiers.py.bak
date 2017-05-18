@@ -25,7 +25,7 @@ class TestNotifierFactory(object):
             },
         }
         ordered_data = OrderedDict(
-            sorted(list(data.items()), key=lambda item: item[0])
+            sorted(data.items(), key=lambda item: item[0])
         )
 
         return ordered_data

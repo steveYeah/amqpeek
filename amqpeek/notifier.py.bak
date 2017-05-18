@@ -17,7 +17,7 @@ def create_notifiers(notifier_data):
 
     return tuple(
         NOTIFIER_MAP[notifier_type](**kwargs)
-        for notifier_type, kwargs in list(notifier_data.items())
+        for notifier_type, kwargs in notifier_data.items()
     )
 
 
