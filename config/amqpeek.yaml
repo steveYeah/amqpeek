@@ -16,16 +16,23 @@ rabbit_connection: {
 # max items in queue before notification is sent
 queues:
   my_queue: {
-      'limit': 0
+      'limit': 10
   }
 
   my_other_queue: {
-      'limit': 0
+      'limit': 10
+  }
+
+  my_other_other_queue: {
+      'limit': 100
   }
 
 # Limits and associated queues.
 #
 # Define a number of queues grouped by limit.
+#
+# This is an alternative approach to
+# defining queues individually, as shown above.
 #
 # key:
 # max items in queue before notification is sent
@@ -33,8 +40,8 @@ queues:
 # value:
 # list of queue names to apply the limit to
 queue_limits:
-  10: ['my_queue']
-  100: ['my_other_queue']
+  10: ['my_queue', 'my_other_queue']
+  100: ['my_other_other_queue']
 
 # Active notifiers:
 #
