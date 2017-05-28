@@ -19,7 +19,7 @@ setup(
     author='Steve Hutchins',
     author_email='hutchinsteve@gmail.com',
     url='https://github.com/steveYeah/AmqPeek',
-    download_url='https://github.com/steveYeah/amqpeek/archive/v0.0.3.tar.gz',
+    download_url='https://github.com/steveYeah/amqpeek/archive/v0.0.4.tar.gz',
     keywords=(
         'amqp',
         'monitor',
