@@ -31,7 +31,7 @@ def read_config(config):
     :return: dict
     """
     with open(config, 'r') as config_file:
-        return yaml.load(config_file)
+        return yaml.load(config_file, Loader=yaml.SafeLoader)
 
 
 def configure_logging(verbosity):
