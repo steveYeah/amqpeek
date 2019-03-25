@@ -30,7 +30,7 @@ setup(
     ),
     install_requires=[
         'click>=6.6',
-        'PyYAML>=3.12',
+        'PyYAML>=5.1',
         'pika>=0.10.0',
         'slacker>=0.9.24',
     ],
@@ -60,6 +60,8 @@ setup(
         "Programming Language :: Python :: 3.3",
         "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
         'Intended Audience :: Developers',
         'Intended Audience :: System Administrators',
         'Topic :: System :: Systems Administration',
