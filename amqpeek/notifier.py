@@ -25,6 +25,7 @@ class Notifier(object):
     """
     Base Notifier class
     """
+
     def notify(self, subject, message):
         """
         Send notifications
@@ -36,6 +37,7 @@ class SmtpNotifier(Notifier):
     """
     Sends Notifications via SMTP
     """
+
     MAIL_TEMPLATE = """\
     From: {from_addr}
     To: {to_addr}
@@ -44,9 +46,7 @@ class SmtpNotifier(Notifier):
     {message}
     """
 
-    def __init__(
-        self, host, to_addr, from_addr, subject, user=None, passwd=None
-    ):
+    def __init__(self, host, to_addr, from_addr, subject, user=None, passwd=None):
         """
         :param host: string
         :param user: string
@@ -74,28 +74,24 @@ class SmtpNotifier(Notifier):
         :param message: string
         """
         subject = "{base_subject} - {subject}".format(
-            base_subject=self.subject,
-            subject=subject
+            base_subject=self.subject, subject=subject
         )
 
         mail_message = self.MAIL_TEMPLATE.format(
             from_addr=self.from_addr,
             to_addr=", ".join(self.to_addr),
             subject=subject,
-            message=message
+            message=message,
         )
 
-        self.server.sendmail(
-            self.from_addr,
-            self.to_addr,
-            mail_message
-        )
+        self.server.sendmail(self.from_addr, self.to_addr, mail_message)
 
 
 class SlackNotifier(Notifier):
     """
     Send notifications via Slack
     """
+
     def __init__(self, api_key, username, channel):
         """
         :param api_key: string
@@ -111,19 +107,11 @@ class SlackNotifier(Notifier):
         :param subject: string
         :param message: string
         """
-        message = "{subject}: {message}".format(
-            subject=subject,
-            message=message
-        )
+        message = "{subject}: {message}".format(subject=subject, message=message)
 
         self.slack.chat.post_message(
-            channel=self.channel,
-            text=message,
-            username=self.username
+            channel=self.channel, text=message, username=self.username
         )
 
 
-NOTIFIER_MAP = {
-    'smtp': SmtpNotifier,
-    'slack': SlackNotifier,
-}
+NOTIFIER_MAP = {"smtp": SmtpNotifier, "slack": SlackNotifier}

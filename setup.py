@@ -39,6 +39,7 @@ setup(
             "pytest",
             "pep8",
             "mock==2.0.0",
+            "black==19.3b0",
         ],
     },
     entry_points={

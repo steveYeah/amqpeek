@@ -1,5 +1,6 @@
 class AmqpeekException(Exception):
     """Base exception for library"""
+
     pass
 
 

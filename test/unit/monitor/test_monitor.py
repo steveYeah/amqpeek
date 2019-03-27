@@ -7,13 +7,10 @@ from amqpeek.notifier import Notifier
 
 
 class TestMonitor(object):
-
     @pytest.fixture
     def monitor(self):
         monitor = Monitor(
-            connector=Mock(),
-            queue_details=[('test_queue_1', 100)],
-            interval=None
+            connector=Mock(), queue_details=[("test_queue_1", 100)], interval=None
         )
 
         monitor.notifiers = [Mock()]
@@ -29,13 +26,12 @@ class TestMonitor(object):
 
     def test_run_failure_to_connect_sends_correct_notification(self, monitor):
         monitor.connector.connect = Mock(side_effect=AMQPConnectionError)
-        monitor.connector.host = 'localhost'
+        monitor.connector.host = "localhost"
 
         monitor.run()
 
         monitor.notifiers[0].notify.assert_called_once_with(
-            'Connection Error',
-            'Error connecting to host: "localhost"'
+            "Connection Error", 'Error connecting to host: "localhost"'
         )
 
     def test_run_connects_to_queues(self, monitor):
@@ -47,8 +43,7 @@ class TestMonitor(object):
 
         monitor.get_queue_message_count.assert_called()
         channel_mock.queue_declare.assert_called_once_with(
-            queue='test_queue_1',
-            passive=True,
+            queue="test_queue_1", passive=True
         )
 
     def test_run_no_errors_found_do_not_notify(self, monitor):
@@ -61,14 +56,15 @@ class TestMonitor(object):
     def test_run_queue_length_error_sends_correct_notification(self, monitor):
         monitor.get_queue_message_count = Mock(
             # the limit of test_queue_one + 1
-            return_value=monitor.queue_details[0][1] + 1
+            return_value=monitor.queue_details[0][1]
+            + 1
         )
 
         monitor.run()
 
         monitor.notifiers[0].notify.assert_called_once_with(
-            'Queue Length Error',
-            'Queue "test_queue_1" is over specified limit!! (101 > 100)'
+            "Queue Length Error",
+            'Queue "test_queue_1" is over specified limit!! (101 > 100)',
         )
 
     def test_run_queue_not_declared_send_correct_notifcation(self, monitor):
@@ -77,11 +73,10 @@ class TestMonitor(object):
         monitor.run()
 
         monitor.notifiers[0].notify.assert_called_once_with(
-            'Queue does not exist',
-            'Queue "test_queue_1" has not been declared'
+            "Queue does not exist", 'Queue "test_queue_1" has not been declared'
         )
 
-    @patch('amqpeek.monitor.time')
+    @patch("amqpeek.monitor.time")
     def test_run_use_interval(self, time_mock, monitor):
         monitor.interval = 10
         monitor.max_connections = 1

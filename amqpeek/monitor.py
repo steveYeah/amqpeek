@@ -14,6 +14,7 @@ class Connector(object):
 
     Holds credentials for continued connection drop and reconnect
     """
+
     def __init__(self, host, port, vhost, user, passwd):
         """
         :param host: string
@@ -39,10 +40,7 @@ class Connector(object):
                 host=self.host,
                 port=self.port,
                 virtual_host=self.vhost,
-                credentials=PlainCredentials(
-                    username=self.user,
-                    password=self.passwd,
-                )
+                credentials=PlainCredentials(username=self.user, password=self.passwd),
             )
         )
 
@@ -51,9 +49,8 @@ class Monitor(object):
     """
     Handles connection to RMQ, test of queues and sending notifications
     """
-    def __init__(
-        self, connector, queue_details, interval=None, max_connections=None
-    ):
+
+    def __init__(self, connector, queue_details, interval=None, max_connections=None):
         """
         :param connector: amqpeek.monitor.Connector
         :param queue_details: dict
@@ -81,12 +78,12 @@ class Monitor(object):
             try:
                 connection = self.connector.connect()
             except AMQPConnectionError:
-                subject = 'Connection Error'
+                subject = "Connection Error"
                 message = 'Error connecting to host: "{host}"'.format(
                     host=self.connector.host
                 )
 
-                logging.info('%s - %s', subject, message)
+                logging.info("%s - %s", subject, message)
                 self.notify(subject, message)
             else:
                 self.check_queues(connection, self.queue_details)
@@ -114,12 +111,12 @@ class Monitor(object):
             try:
                 queue = self.connect_to_queue(channel, queue_name)
             except ChannelClosed:
-                subject = 'Queue does not exist'
-                message = (
-                    'Queue "{queue}" has not been declared'
-                ).format(queue=queue_name)
+                subject = "Queue does not exist"
+                message = ("Queue \"{queue}\" has not been declared").format(
+                    queue=queue_name
+                )
 
-                logging.info('%s - %s', subject, message)
+                logging.info("%s - %s", subject, message)
                 self.notify(subject, message)
 
                 continue
@@ -127,17 +124,15 @@ class Monitor(object):
             message_count = self.get_queue_message_count(queue)
 
             if message_count > queue_limit:
-                subject = 'Queue Length Error'
+                subject = "Queue Length Error"
                 message = (
-                    'Queue "{queue}" is over specified limit!! '
-                    '({message_count} > {limit})'
+                    "Queue \"{queue}\" is over specified limit!! "
+                    "({message_count} > {limit})"
                 ).format(
-                    queue=queue_name,
-                    message_count=message_count,
-                    limit=queue_limit
+                    queue=queue_name, message_count=message_count, limit=queue_limit
                 )
 
-                logging.info('%s - %s', subject, message)
+                logging.info("%s - %s", subject, message)
                 self.notify(subject, message)
 
     def notify(self, subject, message):
@@ -155,10 +150,7 @@ class Monitor(object):
         :return: pika.frame.Method
         :raises: pika.ChannelClosed
         """
-        return channel.queue_declare(
-            queue=queue_name,
-            passive=True,
-        )
+        return channel.queue_declare(queue=queue_name, passive=True)
 
     def get_channel(self, connection):
         """

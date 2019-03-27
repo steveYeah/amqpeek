@@ -13,15 +13,15 @@ from .exceptions import ConfigExistsError
 from .notifier import create_notifiers
 from .monitor import Connector, Monitor
 
-DEFAULT_CONFIG = 'amqpeek.yaml'
+DEFAULT_CONFIG = "amqpeek.yaml"
 
 
 def gen_config_file():
     if os.path.exists(DEFAULT_CONFIG):
-        raise ConfigExistsError('File already exists')
+        raise ConfigExistsError("File already exists")
 
     this_file = os.path.dirname(os.path.realpath(__file__))
-    config_file = '{0}/../config/amqpeek.yaml'.format(this_file)
+    config_file = "{0}/../config/amqpeek.yaml".format(this_file)
     copyfile(config_file, DEFAULT_CONFIG)
 
 
@@ -30,7 +30,7 @@ def read_config(config):
     :param config: string
     :return: dict
     """
-    with open(config, 'r') as config_file:
+    with open(config, "r") as config_file:
         return yaml.load(config_file, Loader=yaml.SafeLoader)
 
 
@@ -46,12 +46,12 @@ def configure_logging(verbosity):
 
 def build_queue_data(app_config):
     queue_config = []
-    config_queues = app_config.get('queues')
-    queue_limits = app_config.get('queue_limits')
+    config_queues = app_config.get("queues")
+    queue_limits = app_config.get("queue_limits")
 
     if config_queues:
         for queue_name, dets in config_queues.items():
-            queue_config.append((queue_name, dets['limit']))
+            queue_config.append((queue_name, dets["limit"]))
 
     if queue_limits:
         for limit, queues in queue_limits.items():
@@ -63,43 +63,34 @@ def build_queue_data(app_config):
 
 @click.command()
 @click.option(
-    '--config',
-    '-c',
+    "--config",
+    "-c",
     default=DEFAULT_CONFIG,
     help=(
-        'Location of configuration file to use '
-        '(defaults to "amqpeek.yaml" in current directory)'
-    )
+        "Location of configuration file to use "
+        "(defaults to \"amqpeek.yaml\" in current directory)"
+    ),
 )
 @click.option(
-    '--interval',
-    '-i',
+    "--interval",
+    "-i",
     type=float,
     default=None,
-    help='Time interval between tests (minutes)'
+    help="Time interval between tests (minutes)",
 )
+@click.option("--verbosity", "-v", count=True, default=0, help="Increase verbosity")
 @click.option(
-    '--verbosity',
-    '-v',
-    count=True,
-    default=0,
-    help='Increase verbosity'
-)
-@click.option(
-    '--max_tests',
-    '-m',
+    "--max_tests",
+    "-m",
     type=int,
     default=None,
-    help='Maximum number of tests to run before stopping'
+    help="Maximum number of tests to run before stopping",
 )
 @click.option(
-    '--gen_config',
-    '-g',
+    "--gen_config",
+    "-g",
     is_flag=True,
-    help=(
-        'Create a basic configuration file and place it in your '
-        'current directory'
-    )
+    help="Create a basic configuration file and place it in your current directory",
 )
 def main(config, interval, verbosity, max_tests, gen_config):
     """
@@ -113,24 +104,18 @@ def main(config, interval, verbosity, max_tests, gen_config):
         except ConfigExistsError:
             click.echo(
                 click.style(
-                    'An AMQPeek config already exists in the current '
-                    'directory',
-                    fg='red'
+                    "An AMQPeek config already exists in the current directory",
+                    fg="red",
                 )
             )
         else:
-            click.echo(
-                click.style(
-                    'AMQPeek config created',
-                    fg='green'
-                )
-            )
+            click.echo(click.style("AMQPeek config created", fg="green"))
 
             click.echo(
                 click.style(
-                    'Edit the file with your details and settings '
-                    'before running AMQPeek',
-                    fg='green'
+                    "Edit the file with your details and settings "
+                    "before running AMQPeek",
+                    fg="green",
                 )
             )
 
@@ -141,16 +126,16 @@ def main(config, interval, verbosity, max_tests, gen_config):
     except IOError:
         click.echo(
             click.style(
-                'No configuration file found. '
-                'Specify a configuration file with --config. '
-                'To generate a base config file use --gen_config.',
-                fg='red'
+                "No configuration file found. "
+                "Specify a configuration file with --config. "
+                "To generate a base config file use --gen_config.",
+                fg="red",
             )
         )
 
         sys.exit(0)
 
-    connector = Connector(**app_config['rabbit_connection'])
+    connector = Connector(**app_config["rabbit_connection"])
 
     queue_config = build_queue_data(app_config)
 
@@ -158,10 +143,10 @@ def main(config, interval, verbosity, max_tests, gen_config):
         connector=connector,
         queue_details=queue_config,
         interval=interval,
-        max_connections=max_tests
+        max_connections=max_tests,
     )
 
-    notifiers = create_notifiers(app_config['notifiers'])
+    notifiers = create_notifiers(app_config["notifiers"])
 
     for notifier in notifiers:
         monitor.add_notifier(notifier)
