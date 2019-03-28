@@ -31,7 +31,7 @@ setup(
     install_requires=[
         'click>=6.6',
         'PyYAML>=5.1',
-        'pika>=0.10.0',
+        'pika<1.0.0',
         'slacker>=0.9.24',
     ],
     extras_require={
@@ -39,7 +39,6 @@ setup(
             "pytest",
             "pep8",
             "mock==2.0.0",
-            "black==19.3b0",
         ],
     },
     entry_points={
