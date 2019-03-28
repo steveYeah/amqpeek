@@ -5,6 +5,15 @@ Here you can see the full list of changes between AMQPeek versions. Versions
 are in form of *headline.major.minor* numbers. Backwards-compatible changes
 increment the minor version number only.
 
+Version 0.0.5
+-------------
+
+Released 2019-03-28
+
+* Pin Pika to < v1.0.0 as there is a yet unknown issue with that version
+* Explicitly use the SafeLoader for PyYaml, as the load() method without specifying a loader is now deprecated
+* Format the codebase with Python Black
+
 Version 0.0.4
 -------------
 
