@@ -31,7 +31,7 @@ setup(
     install_requires=[
         'click>=6.6',
         'PyYAML>=5.1',
-        'pika<1.0.0',
+        'pika<=2.0.0',
         'slacker>=0.9.24',
     ],
     extras_require={
