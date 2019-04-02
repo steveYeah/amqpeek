@@ -5,6 +5,14 @@ Here you can see the full list of changes between AMQPeek versions. Versions
 are in form of *headline.major.minor* numbers. Backwards-compatible changes
 increment the minor version number only.
 
+Version 0.0.6
+-------------
+
+Released 2019-04-02
+
+* Allow use of Pika version 1
+* Fix test related issues with Pika 1.0.0
+
 Version 0.0.5
 -------------
 
