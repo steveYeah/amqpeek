@@ -85,7 +85,7 @@ class TestCli(object):
         )
 
     @patch("amqpeek.monitor.time")
-    @pytest.mark.usefixtures("mock_notifiers", "queue_count_patch")
+    @pytest.mark.usefixtures("connector_patch", "mock_notifiers", "queue_count_patch")
     def test_cli_wait_and_max_connects(self, time_mock, cli_runner, config_file):
         result = cli_runner.invoke(main, ["-c{}".format(config_file), "-i1", "-m1"])
 
