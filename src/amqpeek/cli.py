@@ -21,7 +21,7 @@ def gen_config_file():
         raise ConfigExistsError("File already exists")
 
     this_file = os.path.dirname(os.path.realpath(__file__))
-    config_file = "{0}/../config/amqpeek.yaml".format(this_file)
+    config_file = "{0}/../../config/amqpeek.yaml".format(this_file)
     copyfile(config_file, DEFAULT_CONFIG)
 
 

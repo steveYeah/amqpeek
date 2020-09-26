@@ -1,6 +1,6 @@
 import pytest
 from collections import OrderedDict
-from mock import patch
+from unittest.mock import patch
 
 from amqpeek.notifier import create_notifiers, SmtpNotifier, SlackNotifier
 

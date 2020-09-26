@@ -1,5 +1,5 @@
 import pytest
-from mock import patch
+from unittest.mock import patch
 
 from amqpeek.cli import gen_config_file
 from amqpeek.exceptions import ConfigExistsError
@@ -21,7 +21,7 @@ class TestGenConfigFile:
         this_file = "current_file_location"
 
         path_dirname_patch.return_value = this_file
-        config_file = "{0}/../config/amqpeek.yaml".format(this_file)
+        config_file = "{0}/../../config/amqpeek.yaml".format(this_file)
 
         gen_config_file()
 

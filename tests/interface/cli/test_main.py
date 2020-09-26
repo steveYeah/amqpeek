@@ -1,6 +1,6 @@
 import pytest
 from click.testing import CliRunner
-from mock import patch, Mock
+from unittest.mock import patch, Mock
 from pika.exceptions import AMQPConnectionError
 
 from amqpeek.cli import main
