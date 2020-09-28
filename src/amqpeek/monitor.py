@@ -112,7 +112,7 @@ class Monitor(object):
                 queue = self.connect_to_queue(channel, queue_name)
             except ChannelClosed:
                 subject = "Queue does not exist"
-                message = ("Queue \"{queue}\" has not been declared").format(
+                message = ('Queue "{queue}" has not been declared').format(
                     queue=queue_name
                 )
 
@@ -126,7 +126,7 @@ class Monitor(object):
             if message_count > queue_limit:
                 subject = "Queue Length Error"
                 message = (
-                    "Queue \"{queue}\" is over specified limit!! "
+                    'Queue "{queue}" is over specified limit!! '
                     "({message_count} > {limit})"
                 ).format(
                     queue=queue_name, message_count=message_count, limit=queue_limit

@@ -68,7 +68,7 @@ class TestMonitor(object):
         )
 
     def test_run_queue_not_declared_send_correct_notifcation(self, monitor):
-        monitor.connect_to_queue = Mock(side_effect=ChannelClosed(404, 'NOT FOUND'))
+        monitor.connect_to_queue = Mock(side_effect=ChannelClosed(404, "NOT FOUND"))
 
         monitor.run()
 

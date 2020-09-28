@@ -68,7 +68,7 @@ def build_queue_data(app_config):
     default=DEFAULT_CONFIG,
     help=(
         "Location of configuration file to use "
-        "(defaults to \"amqpeek.yaml\" in current directory)"
+        '(defaults to "amqpeek.yaml" in current directory)'
     ),
 )
 @click.option(

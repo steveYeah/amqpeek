@@ -5,17 +5,19 @@ import nox
 from nox.sessions import Session
 from typing import Any
 
+locations = "src", "tests", "noxfile.py"
+
 
 def install_with_constraints(session: Session, *args: str, **kwargs: Any) -> None:
     """Install packages constrained by Poetry's lock file."""
     with tempfile.NamedTemporaryFile() as requirements:
         session.run(
-                "poetry",
-                "export",
-                "--dev",
-                "--format=requirements.txt",
-                f"--output={requirements.name}",
-                )
+            "poetry",
+            "export",
+            "--dev",
+            "--format=requirements.txt",
+            f"--output={requirements.name}",
+        )
         session.install(f"--constraint={requirements.name}", *args, **kwargs)
 
 
@@ -28,3 +30,8 @@ def tests(session: Session) -> None:
     session.run("pytest", *args)
 
 
+@nox.session(python="3.8")
+def black(session: Session) -> None:
+    args = session.posargs or locations
+    install_with_constraints(session, "black")
+    session.run("black", *args)
