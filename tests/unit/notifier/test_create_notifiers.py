@@ -1,13 +1,18 @@
-import pytest
+"""Tests for the creation of notifiers."""
+
 from collections import OrderedDict
 from unittest.mock import patch
 
-from amqpeek.notifier import create_notifiers, SmtpNotifier, SlackNotifier
+import pytest
+from amqpeek.notifier import create_notifiers, SlackNotifier, SmtpNotifier
 
 
 class TestNotifierFactory(object):
+    """Tests for the notifier factory."""
+
     @pytest.fixture
     def notifier_data(self):
+        """Mock notifier config."""
         data = {
             "smtp": {
                 "host": "192.168.99.100",
@@ -28,6 +33,7 @@ class TestNotifierFactory(object):
         return ordered_data
 
     def test_create_notifiers_returns_correct_notifiers(self, notifier_data):
+        """Test the correct notifier objects are returned for the given config."""
         # We have to patch SMTP as a connection is established on
         # instantiation
         with patch("amqpeek.notifier.SMTP"):

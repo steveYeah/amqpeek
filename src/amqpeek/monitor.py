@@ -1,27 +1,26 @@
-"""
-Connecting to, and monitoring of RMQ
-"""
+"""Connecting to, and monitoring of RMQ."""
 import logging
 import time
 
-from pika import PlainCredentials, BlockingConnection, ConnectionParameters
+from pika import BlockingConnection, ConnectionParameters, PlainCredentials
 from pika.exceptions import AMQPConnectionError, ChannelClosed
 
 
 class Connector(object):
-    """
-    Abstracted connection to RMQ.
+    """Abstracted connection to RMQ.
 
-    Holds credentials for continued connection drop and reconnect
+    Holds credentials for continued connection drop and reconnect.
     """
 
     def __init__(self, host, port, vhost, user, passwd):
-        """
-        :param host: string
-        :param port: string
-        :param vhost: string
-        :param user: string
-        :param passwd: string
+        """Create Connector with given config.
+
+        Args:
+            host: Host of the RMQ server
+            port: Port the RMQ server is running on
+            vhost: RMQ vhost
+            user: User name used to connection to RMQ server
+            passwd: Password used to connect to RMQ server
         """
         self.host = host
         self.port = port
@@ -30,10 +29,10 @@ class Connector(object):
         self.passwd = passwd
 
     def connect(self):
-        """
-        Create blocking connection in RMQ
+        """Create blocking connection in RMQ.
 
-        :return: pika.BlockingConnection
+        Returns:
+            A BlockingConnection to the RMQ server specified
         """
         return BlockingConnection(
             parameters=ConnectionParameters(
@@ -46,16 +45,17 @@ class Connector(object):
 
 
 class Monitor(object):
-    """
-    Handles connection to RMQ, test of queues and sending notifications
-    """
+    """Handles connection to RMQ, test of queues and sending notifications."""
 
     def __init__(self, connector, queue_details, interval=None, max_connections=None):
-        """
-        :param connector: amqpeek.monitor.Connector
-        :param queue_details: dict
-        :param interval: float
-        :param max_connections: int
+        """Creates a Monitor with the given parameters.
+
+        Args:
+            connector: The connector object used to create a connection to the
+                RMQ server to be monitored
+            queue_details: The map of the queues to connect to and there limits
+            interval: The time to wait between checks
+            max_connections: The max time to connect the RMQ server before exiting
         """
         self.connector = connector
         self.queue_details = queue_details
@@ -65,15 +65,15 @@ class Monitor(object):
         self.notifiers = []
 
     def add_notifier(self, notifier):
-        """
-        :param notifier: amqpeek.notifier.Notifier
+        """Adds a notifier to this monitor that will be used to send notifications to.
+
+        Args:
+            notifier: The notifier to add to the monitor
         """
         self.notifiers.append(notifier)
 
     def run(self):
-        """
-        Main execution loop
-        """
+        """Main execution loop."""
         while True:
             try:
                 connection = self.connector.connect()
@@ -99,11 +99,11 @@ class Monitor(object):
                 return
 
     def check_queues(self, connection, queue_details):
-        """
-        Check number of messages in queues are within limits
+        """Check number of messages in queues are within limits.
 
-        :param connection: pika.BlockingConnection
-        :param queue_details:
+        Args:
+            connection: The connection object representing the connection to the RMQ server
+            queue_details: A map of the queues and thier specified limits
         """
         channel = self.get_channel(connection)
 
@@ -136,32 +136,46 @@ class Monitor(object):
                 self.notify(subject, message)
 
     def notify(self, subject, message):
-        """
-        :param subject: string
-        :param message: string
+        """Main entry point for sending notifications using this monitors notifiers.
+
+        Args:
+            subject: The subject of the notification
+            message: The main body of the notification
         """
         for notifier in self.notifiers:
             notifier.notify(subject, message)
 
     def connect_to_queue(self, channel, queue_name):
-        """
-        :param: channel: pika.channel.Channel
-        :param: queue_name: string
-        :return: pika.frame.Method
-        :raises: pika.ChannelClosed
+        """Connect to the given queue on the given channel.
+
+        Args:
+            channel: The active channel to the RMQ server
+            queue_name: The queue to connect too
+
+        Returns:
+            A representation of the requested queue, holding data about the
+            number of messages, amongst other things
         """
         return channel.queue_declare(queue=queue_name, passive=True)
 
     def get_channel(self, connection):
-        """
-        :param: connection: pika.BlockingConnection
-        :return: pika.channel.Channel
+        """Get the channel from the given connection.
+
+        Args:
+            connection: The connection to the RMQ server
+
+        Returns:
+            The active channel to the RMQ server
         """
         return connection.channel()
 
     def get_queue_message_count(self, queue):
-        """
-        :param: queue: pika.frame.Method
-        :return: int
+        """Get the number of messages on the given queue at time of connection.
+
+        Args:
+            queue: The queue we want to get the count of messages from
+
+        Returns:
+            The number of messages on the queue at time of connection
         """
         return queue.method.message_count  # pragma: no cover

@@ -1,6 +1,5 @@
-"""
-CLI script and main entry point for amqpeek
-"""
+"""CLI script and main entry point for amqpeek."""
+
 import logging
 import os
 import sys
@@ -10,13 +9,18 @@ import click
 import yaml
 
 from .exceptions import ConfigExistsError
-from .notifier import create_notifiers
 from .monitor import Connector, Monitor
+from .notifier import create_notifiers
 
 DEFAULT_CONFIG = "amqpeek.yaml"
 
 
 def gen_config_file():
+    """Genereate a config file from the example template.
+
+    Raises:
+        ConfigExistsError: When the config already exists
+    """
     if os.path.exists(DEFAULT_CONFIG):
         raise ConfigExistsError("File already exists")
 
@@ -26,17 +30,23 @@ def gen_config_file():
 
 
 def read_config(config):
-    """
-    :param config: string
-    :return: dict
+    """Read the AMQPeek config from the given file.
+
+    Args:
+        config: The config file to read from
+
+    Returns:
+        A map containing all the config data
     """
     with open(config, "r") as config_file:
         return yaml.load(config_file, Loader=yaml.SafeLoader)
 
 
 def configure_logging(verbosity):
-    """
-    :param verbosity: int
+    """Sets the logging verbosity for the session.
+
+    Args:
+        verbosity: The verbosity level
     """
     if verbosity > 0:
         logging.basicConfig(format="%(message)s", level=logging.INFO)
@@ -45,6 +55,14 @@ def configure_logging(verbosity):
 
 
 def build_queue_data(app_config):
+    """Creates a list of tuples containing queue name and limit pairs.
+
+    Args:
+        app_config: Map containing the config
+
+    Returns:
+        A set of name and Q limit pairs
+    """
     queue_config = []
     config_queues = app_config.get("queues")
     queue_limits = app_config.get("queue_limits")
@@ -93,8 +111,14 @@ def build_queue_data(app_config):
     help="Create a basic configuration file and place it in your current directory",
 )
 def main(config, interval, verbosity, max_tests, gen_config):
-    """
-    AMQPeek - Simple, flexible RMQ monitor
+    """Entry point for AMQPeek - Simple, flexible RMQ monitor.
+
+    Args:
+        config: Location of the config file to use for this session
+        interval: The time to wait between RMQ testing
+        verbosity: The verbosity level
+        max_tests: The max tests to perform in this session
+        gen_config: If this session is being used to generate the config file
     """
     configure_logging(verbosity)
 

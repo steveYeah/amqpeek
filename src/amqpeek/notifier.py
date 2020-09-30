@@ -1,16 +1,17 @@
-"""
-Classes for connecting to different channels to send
-notifications
-"""
+"""Classes for connecting to different channels to send notifications."""
 from smtplib import SMTP
 
 from slacker import Slacker
 
 
 def create_notifiers(notifier_data):
-    """
-    :param notifier_data: dict
-    :return: tuple
+    """Create the notifiers specificed in the given map.
+
+    Args:
+        notifier_data: Map of the required notifiers
+
+    Returns:
+        A collection of notifier objects
     """
     if not notifier_data:
         return tuple()
@@ -22,21 +23,20 @@ def create_notifiers(notifier_data):
 
 
 class Notifier(object):
-    """
-    Base Notifier class
-    """
+    """Base Notifier class."""
 
     def notify(self, subject, message):
-        """
-        Send notifications
+        """Send notifications.
+
+        Args:
+            subject: The subject of the notification
+            message: The body of the notification
         """
         pass  # pragma: no cover
 
 
 class SmtpNotifier(Notifier):
-    """
-    Sends Notifications via SMTP
-    """
+    """Sends Notifications via SMTP."""
 
     MAIL_TEMPLATE = """\
     From: {from_addr}
@@ -47,15 +47,15 @@ class SmtpNotifier(Notifier):
     """
 
     def __init__(self, host, to_addr, from_addr, subject, user=None, passwd=None):
-        """
-        :param host: string
-        :param user: string
-        :param passwd: string
-        :param to_addr: string
-        :param from_addr: string
-        :param subject: string
-        :param user: string
-        :param: passwd
+        """Creates an SMTP notifier with the given parameters.
+
+        Args:
+            host: The host of the SMTP server
+            user: The username to use when conencting to the server
+            passwd: The password to use to connect to the server
+            to_addr: The address to send the emails to
+            from_addr: The from address of the emails sent from this notifier
+            subject: The subject of the emails
         """
         self.host = host
         self.to_addr = to_addr
@@ -69,9 +69,11 @@ class SmtpNotifier(Notifier):
             self.server.login(self.user, self.passwd)
 
     def notify(self, subject, message):
-        """
-        :param subject: string
-        :param message: string
+        """Send notification via email.
+
+        Args:
+            subject: The subject of the email
+            message: The body of the email
         """
         subject = "{base_subject} - {subject}".format(
             base_subject=self.subject, subject=subject
@@ -88,24 +90,26 @@ class SmtpNotifier(Notifier):
 
 
 class SlackNotifier(Notifier):
-    """
-    Send notifications via Slack
-    """
+    """Send notifications via Slack."""
 
     def __init__(self, api_key, username, channel):
-        """
-        :param api_key: string
-        :param username: string
-        :param channel: string
+        """Create a Slack notifier with the given parameters.
+
+        Args:
+            api_key: The API key used to connect to Slack
+            username: The username of the message sender on Slack
+            channel: The channel to send the message to
         """
         self.username = username
         self.channel = channel
         self.slack = Slacker(api_key)
 
     def notify(self, subject, message):
-        """
-        :param subject: string
-        :param message: string
+        """Send notification via Slack.
+
+        Args:
+            subject: The subject of the message
+            message: The message body
         """
         message = "{subject}: {message}".format(subject=subject, message=message)
 

@@ -1,20 +1,26 @@
-import pytest
-from click.testing import CliRunner
-from unittest.mock import patch, Mock
-from pika.exceptions import AMQPConnectionError
+"""Tests for the CLI entry point."""
 
+from unittest.mock import Mock, patch
+
+import pytest
 from amqpeek.cli import main
 from amqpeek.monitor import Connector, Monitor
+from click.testing import CliRunner
+from pika.exceptions import AMQPConnectionError
 
 
 class TestCli(object):
+    """Tests for the Cli module."""
+
     @pytest.yield_fixture
     def connector_patch(self):
+        """Mocked connector."""
         with patch.object(Connector, "connect") as conn:
             yield conn
 
     @pytest.yield_fixture
     def queue_count_patch(self):
+        """Patched the queue_count method on Monitor."""
         with patch.object(
             Monitor, "get_queue_message_count", return_value=0
         ) as queue_count:
@@ -22,6 +28,7 @@ class TestCli(object):
 
     @pytest.yield_fixture
     def mock_notifiers(self):
+        """Create mock notifiers."""
         with patch("amqpeek.cli.create_notifiers") as create_notifiers_mock:
             mock_notifiers = (Mock(), Mock())
             create_notifiers_mock.return_value = mock_notifiers
@@ -30,10 +37,12 @@ class TestCli(object):
 
     @pytest.fixture
     def cli_runner(self):
+        """Creates CLiRunner for use in other tests."""
         return CliRunner()
 
     @pytest.mark.usefixtures("connector_patch", "queue_count_patch")
     def test_cli_all_ok_no_notify(self, mock_notifiers, cli_runner, config_file):
+        """When no queues are over the specified limits, the monitor does not notify."""
         result = cli_runner.invoke(main, ["-c{}".format(config_file)])
 
         assert result.exit_code == 0
@@ -44,6 +53,7 @@ class TestCli(object):
     def test_cli_notify_on_queue_length(
         self, mock_notifiers, queue_count_patch, cli_runner, config_file
     ):
+        """When queue is over specified length, notifications sent by all notifiers."""
         queue_count_patch.return_value = 1
         result = cli_runner.invoke(main, ["-c{}".format(config_file)])
 
@@ -64,6 +74,7 @@ class TestCli(object):
         config_file,
         connector_patch,
     ):
+        """Notifications sent via all notifiers when monitor cannot connect to queue."""
         queue_count_patch.return_value = 1
         connector_patch.side_effect = AMQPConnectionError
 
@@ -87,6 +98,7 @@ class TestCli(object):
     @patch("amqpeek.monitor.time")
     @pytest.mark.usefixtures("connector_patch", "mock_notifiers", "queue_count_patch")
     def test_cli_wait_and_max_connects(self, time_mock, cli_runner, config_file):
+        """Test the wait times and number of connections params are respected."""
         result = cli_runner.invoke(main, ["-c{}".format(config_file), "-i1", "-m1"])
 
         assert result.exit_code == 0
@@ -94,6 +106,7 @@ class TestCli(object):
 
     @patch("amqpeek.cli.open")
     def test_cli_no_config(self, open_patch, mock_notifiers, cli_runner, config_file):
+        """Test error is raised and program exits when no config file availiable."""
         open_patch.side_effect = IOError
         result = cli_runner.invoke(main)
 
@@ -105,6 +118,7 @@ class TestCli(object):
         )
 
     def test_create_config(self, mock_notifiers, cli_runner, config_file):
+        """Test a config file can be created."""
         with cli_runner.isolated_filesystem():
             result = cli_runner.invoke(main, ["-g"])
 
@@ -116,6 +130,7 @@ class TestCli(object):
         )
 
     def test_create_config_file_exists(self, mock_notifiers, cli_runner, config_file):
+        """Error and exist when attempt to create a config file when one exists."""
         with cli_runner.isolated_filesystem():
             with open("amqpeek.yaml", "w") as f:
                 f.write("Some config")

@@ -1,10 +1,11 @@
 """Nox Sessions."""
 import tempfile
+from typing import Any
 
 import nox
 from nox.sessions import Session
-from typing import Any
 
+nox.options.session = "lint", "tests"
 locations = "src", "tests", "noxfile.py"
 
 
@@ -32,6 +33,24 @@ def tests(session: Session) -> None:
 
 @nox.session(python="3.8")
 def black(session: Session) -> None:
+    """Black code formatter."""
     args = session.posargs or locations
     install_with_constraints(session, "black")
     session.run("black", *args)
+
+
+@nox.session(python="3.8")
+def lint(session: Session) -> None:
+    """Flake8 linting."""
+    args = session.posargs or locations
+    install_with_constraints(
+        session,
+        "flake8",
+        "flake8-bandit",
+        "flake8-black",
+        "flake8-bugbear",
+        "flake8-docstrings",
+        "flake8-import-order",
+        "darglint",
+    )
+    session.run("flake8", *args)

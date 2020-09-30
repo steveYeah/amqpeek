@@ -1,12 +1,17 @@
-import pytest
+"""Tests for the Connector module."""
+
 from unittest.mock import Mock, patch
 
+import pytest
 from amqpeek.monitor import Connector
 
 
 class TestConnector(object):
+    """Tests for the Connector class."""
+
     @pytest.fixture
     def connection_params(self):
+        """Connection params."""
         return {
             "host": "localhost",
             "port": 5672,
@@ -17,6 +22,7 @@ class TestConnector(object):
 
     @pytest.fixture
     def connector(self, connection_params):
+        """Creates a connector for use in other tests."""
         return Connector(**connection_params)
 
     @patch("amqpeek.monitor.BlockingConnection")
@@ -30,6 +36,7 @@ class TestConnector(object):
         connector,
         connection_params,
     ):
+        """Test a connection attempt is made with the supplied details."""
         credentials_instance_mock = Mock()
         plain_credentials.return_value = credentials_instance_mock
 

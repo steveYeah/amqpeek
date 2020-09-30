@@ -1,3 +1,4 @@
+"""Fixtures availiable to the entire suite."""
 import os
 
 import pytest
@@ -6,6 +7,7 @@ import yaml
 
 @pytest.fixture
 def config_data():
+    """Dummy config data."""
     return {
         "rabbit_connection": {
             "user": "guest",
@@ -32,6 +34,8 @@ def config_data():
 
 @pytest.yield_fixture
 def config_file(config_data):
+    """Creates a temporary config file used by the tests."""
+    # TODO: Use the tempfile module
     test_config_name = "test_config.yaml"
 
     fp = open(test_config_name, "w")

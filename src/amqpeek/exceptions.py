@@ -1,11 +1,13 @@
+"""Exceptions used in this library."""
+
+
 class AmqpeekException(Exception):
-    """Base exception for library"""
+    """Base exception for library."""
 
     pass
 
 
 class ConfigExistsError(AmqpeekException):
-    """
-    Error thown when attempting to create a
-    configuration file, but it already exists
-    """
+    """Attempting to create a configuration file, but it already exists."""
+
+    pass

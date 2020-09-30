@@ -1,0 +1,11 @@
+[flake8]
+application-import-names = anqpeek,tests
+import-order-style = smarkets
+docstring-convention = google
+select = ANN,B,B9,BLK,C,D,DAR,E,F,I,S,W
+ignore = E203, E501, W503, ANN101, ANN102
+per-file-ignores =
+    tests/*:S101,DAR101,DAR201,DAR301
+    noxfile.py:DAR101
+max-line-length = 88
+max-complexity = 10
