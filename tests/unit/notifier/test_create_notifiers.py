@@ -44,6 +44,7 @@ class TestNotifierFactory(object):
         assert isinstance(notifiers[1], SmtpNotifier)
 
     def tests_create_notifiers_with_no_data_returns_empty_tuple(self):
+        """Test create norifiers with empty config."""
         notifiers = create_notifiers({})
 
         assert len(notifiers) == 0
