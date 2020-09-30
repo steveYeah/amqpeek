@@ -42,3 +42,8 @@ class TestNotifierFactory(object):
         assert len(notifiers) == len(notifier_data)
         assert isinstance(notifiers[0], SlackNotifier)
         assert isinstance(notifiers[1], SmtpNotifier)
+
+    def tests_create_notifiers_with_no_data_returns_empty_tuple(self):
+        notifiers = create_notifiers({})
+
+        assert len(notifiers) == 0

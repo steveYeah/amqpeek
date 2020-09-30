@@ -91,9 +91,9 @@ class TestMonitor(object):
     def test_run_use_interval(self, time_mock, monitor):
         """Test the interval parameter is respected."""
         monitor.interval = 10
-        monitor.max_connections = 1
+        monitor.max_connections = 2
         monitor.get_queue_message_count = Mock(return_value=1)
 
         monitor.run()
 
-        time_mock.sleep.assert_called_once_with(monitor.interval * 60)
+        time_mock.sleep.assert_called_with(monitor.interval * 60)
