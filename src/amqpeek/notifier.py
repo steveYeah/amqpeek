@@ -1,6 +1,6 @@
 """Classes for connecting to different channels to send notifications."""
 from smtplib import SMTP
-from typing import Optional
+from typing import List, Optional
 
 from slacker import Slacker
 
@@ -50,7 +50,7 @@ class SmtpNotifier(Notifier):
     def __init__(
         self,
         host: str,
-        to_addr: str,
+        to_addr: List[str],
         from_addr: str,
         subject: str,
         user: Optional[str] = None,

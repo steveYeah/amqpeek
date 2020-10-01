@@ -7,6 +7,7 @@ from nox.sessions import Session
 
 nox.options.sessions = "lint", "mypy", "safety", "tests"
 locations = "src", "tests", "noxfile.py"
+package = "amqpeek"
 
 
 def install_with_constraints(session: Session, *args: str, **kwargs: Any) -> None:
@@ -88,5 +89,7 @@ def tests(session: Session) -> None:
     """Run test suite."""
     args = session.posargs or ["--cov"]
     session.run("poetry", "install", "--no-dev", external=True)
-    install_with_constraints(session, "coverage[toml]", "pytest", "pytest-cov")
-    session.run("pytest", *args)
+    install_with_constraints(
+        session, "coverage[toml]", "pytest", "pytest-cov", "typeguard"
+    )
+    session.run("pytest", f"--typeguard-packages={package}", *args)
