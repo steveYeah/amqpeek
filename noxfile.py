@@ -5,7 +5,7 @@ from typing import Any
 import nox
 from nox.sessions import Session
 
-nox.options.session = "lint", "safety", "tests"
+nox.options.sessions = "lint", "safety", "tests"
 locations = "src", "tests", "noxfile.py"
 
 
