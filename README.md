@@ -1,3 +1,5 @@
+[![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/C0C826VYD)
+
 ![Tests](https://github.com/steveYeah/amqpeek/workflows/Tests/badge.svg)
 ![Coverage](https://github.com/steveYeah/amqpeek/workflows/Coverage/badge.svg)
 ![Release Drafter](https://github.com/steveYeah/amqpeek/workflows/Release%20Drafter/badge.svg)

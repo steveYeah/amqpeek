@@ -5,6 +5,10 @@ description = "A flexible RMQ monitor that keeps track of RMQ, notifying you ove
 authors = ["steveYeah <hutchinsteve@gmail.com>"]
 include = ["config/*.yaml"]
 license = "MIT"
+readme="README.md"
+homepage="https://github.com/steveYeah/amqpeek"
+repository="https://github.com/steveYeah/amqpeek"
+
 
 [tool.poetry.scripts]
 amqpeek = "amqpeek.cli:main"
