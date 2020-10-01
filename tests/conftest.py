@@ -1,5 +1,6 @@
 """Fixtures availiable to the entire suite."""
 import os
+from typing import Generator
 
 import pytest
 import yaml
@@ -33,7 +34,7 @@ def config_data() -> dict:
 
 
 @pytest.yield_fixture
-def config_file(config_data: dict) -> str:
+def config_file(config_data: dict) -> Generator:
     """Creates a temporary config file used by the tests."""
     # TODO: Use the tempfile module
     test_config_name = "test_config.yaml"

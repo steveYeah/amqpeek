@@ -1,5 +1,6 @@
 """Classes for connecting to different channels to send notifications."""
 from smtplib import SMTP
+from typing import Optional
 
 from slacker import Slacker
 
@@ -52,8 +53,8 @@ class SmtpNotifier(Notifier):
         to_addr: str,
         from_addr: str,
         subject: str,
-        user: str = None,
-        passwd: str = None,
+        user: Optional[str] = None,
+        passwd: Optional[str] = None,
     ) -> None:
         """Creates an SMTP notifier with the given parameters.
 
@@ -73,7 +74,7 @@ class SmtpNotifier(Notifier):
         self.passwd = passwd
         self.server = SMTP(self.host)
 
-        if self.user is not None:
+        if self.user and self.passwd:
             self.server.login(self.user, self.passwd)
 
     def notify(self, subject: str, message: str) -> None:

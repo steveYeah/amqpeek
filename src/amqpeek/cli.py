@@ -4,6 +4,7 @@ import logging
 import os
 import sys
 from shutil import copyfile
+from typing import List
 
 import click
 import yaml
@@ -29,7 +30,7 @@ def gen_config_file() -> None:
     copyfile(config_file, DEFAULT_CONFIG)
 
 
-def read_config(config_file_name: str) -> None:
+def read_config(config_file_name: str) -> dict:
     """Read the AMQPeek config from the given file.
 
     Args:
@@ -54,7 +55,7 @@ def configure_logging(verbosity: int) -> None:
         logging.basicConfig(format="%(message)s", level=logging.ERROR)
 
 
-def build_queue_data(app_config: dict) -> None:
+def build_queue_data(app_config: dict) -> List[tuple]:
     """Creates a list of tuples containing queue name and limit pairs.
 
     Args:
@@ -76,7 +77,7 @@ def build_queue_data(app_config: dict) -> None:
             for queue_name in queues:
                 queue_config.append((queue_name, limit))
 
-    return set(queue_config)
+    return list(set(queue_config))
 
 
 @click.command()

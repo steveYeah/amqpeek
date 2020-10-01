@@ -5,7 +5,7 @@ from typing import Any
 import nox
 from nox.sessions import Session
 
-nox.options.sessions = "lint", "safety", "tests"
+nox.options.sessions = "lint", "mypy", "safety", "tests"
 locations = "src", "tests", "noxfile.py"
 
 
@@ -55,6 +55,14 @@ def lint(session: Session) -> None:
         "darglint",
     )
     session.run("flake8", *args)
+
+
+@nox.session(python="3.8")
+def mypy(session: Session) -> None:
+    """Run static type checker."""
+    args = session.posargs or locations
+    install_with_constraints(session, "mypy")
+    session.run("mypy", *args)
 
 
 @nox.session(python="3.8")

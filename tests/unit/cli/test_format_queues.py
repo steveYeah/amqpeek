@@ -16,10 +16,10 @@ class TestFormatQueues:
         """
         result = build_queue_data(config_data)
 
-        assert isinstance(result, set)
+        assert isinstance(result, list)
         assert len(result) == 2
 
-        expected_queues = set([("my_queue", 0), ("my_other_queue", 1)])
+        expected_queues = [("my_queue", 0), ("my_other_queue", 1)]
         for excepted_queue in expected_queues:
             assert excepted_queue in result
 
@@ -30,7 +30,7 @@ class TestFormatQueues:
 
         result = build_queue_data(config_data)
 
-        assert result == {("my_queue", 0)}
+        assert result == [("my_queue", 0)]
 
     def test_just_queue_limits_config(self, config_data: dict) -> None:
         """Test that queue limits config is parsed correctly."""
@@ -41,7 +41,7 @@ class TestFormatQueues:
 
         assert len(result) == 2
 
-        expected_queues = set([("my_queue", 0), ("my_other_queue", 1)])
+        expected_queues = [("my_queue", 0), ("my_other_queue", 1)]
         for excepted_queue in expected_queues:
             assert excepted_queue in result
 
@@ -49,4 +49,4 @@ class TestFormatQueues:
         """Test handling of no queue config."""
         result = build_queue_data({})
 
-        assert result == set([])
+        assert result == []

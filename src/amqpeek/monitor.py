@@ -1,6 +1,7 @@
 """Connecting to, and monitoring of RMQ."""
 import logging
 import time
+from typing import Any, List, Optional
 
 from pika import BlockingConnection, ConnectionParameters, PlainCredentials
 from pika.channel import Channel
@@ -55,9 +56,9 @@ class Monitor(object):
     def __init__(
         self,
         connector: Connector,
-        queue_details: dict,
-        interval: int = None,
-        max_connections: int = None,
+        queue_details: List[tuple],
+        interval: Optional[float] = None,
+        max_connections: Optional[int] = None,
     ) -> None:
         """Creates a Monitor with the given parameters.
 
@@ -73,7 +74,7 @@ class Monitor(object):
         self.interval = interval
         self.max_connections = max_connections
         self.connection_count = 0
-        self.notifiers = []
+        self.notifiers: List[Notifier] = []
 
     def add_notifier(self, notifier: Notifier) -> None:
         """Adds a notifier to this monitor that will be used to send notifications to.
@@ -109,7 +110,9 @@ class Monitor(object):
             else:
                 return
 
-    def check_queues(self, connection: BlockingConnection, queue_details: dict) -> None:
+    def check_queues(
+        self, connection: BlockingConnection, queue_details: List[tuple]
+    ) -> None:
         """Check number of messages in queues are within limits.
 
         Args:
@@ -156,7 +159,7 @@ class Monitor(object):
         for notifier in self.notifiers:
             notifier.notify(subject, message)
 
-    def connect_to_queue(self, channel: Channel, queue_name: str) -> None:
+    def connect_to_queue(self, channel: Channel, queue_name: str) -> Any:
         """Connect to the given queue on the given channel.
 
         Args:
@@ -180,7 +183,7 @@ class Monitor(object):
         """
         return connection.channel()
 
-    def get_queue_message_count(self, queue: str) -> int:
+    def get_queue_message_count(self, queue: Any) -> int:
         """Get the number of messages on the given queue at time of connection.
 
         Args:
