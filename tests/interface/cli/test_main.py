@@ -1,25 +1,26 @@
 """Tests for the CLI entry point."""
 
-from unittest.mock import Mock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 import pytest
-from amqpeek.cli import main
-from amqpeek.monitor import Connector, Monitor
 from click.testing import CliRunner
 from pika.exceptions import AMQPConnectionError
+
+from amqpeek.cli import main
+from amqpeek.monitor import Connector, Monitor
 
 
 class TestCli(object):
     """Tests for the Cli module."""
 
     @pytest.yield_fixture
-    def connector_patch(self):
+    def connector_patch(self) -> MagicMock:
         """Mocked connector."""
         with patch.object(Connector, "connect") as conn:
             yield conn
 
     @pytest.yield_fixture
-    def queue_count_patch(self):
+    def queue_count_patch(self) -> MagicMock:
         """Patched the queue_count method on Monitor."""
         with patch.object(
             Monitor, "get_queue_message_count", return_value=0
@@ -27,7 +28,7 @@ class TestCli(object):
             yield queue_count
 
     @pytest.yield_fixture
-    def mock_notifiers(self):
+    def mock_notifiers(self) -> tuple:
         """Create mock notifiers."""
         with patch("amqpeek.cli.create_notifiers") as create_notifiers_mock:
             mock_notifiers = (Mock(), Mock())
@@ -36,12 +37,14 @@ class TestCli(object):
             yield mock_notifiers
 
     @pytest.fixture
-    def cli_runner(self):
+    def cli_runner(self) -> CliRunner:
         """Creates CLiRunner for use in other tests."""
         return CliRunner()
 
     @pytest.mark.usefixtures("connector_patch", "queue_count_patch")
-    def test_cli_all_ok_no_notify(self, mock_notifiers, cli_runner, config_file):
+    def test_cli_all_ok_no_notify(
+        self, mock_notifiers: tuple, cli_runner: CliRunner, config_file: str
+    ) -> None:
         """When no queues are over the specified limits, the monitor does not notify."""
         result = cli_runner.invoke(main, ["-c{}".format(config_file)])
 
@@ -51,8 +54,12 @@ class TestCli(object):
 
     @pytest.mark.usefixtures("connector_patch")
     def test_cli_notify_on_queue_length(
-        self, mock_notifiers, queue_count_patch, cli_runner, config_file
-    ):
+        self,
+        mock_notifiers: tuple,
+        queue_count_patch: MagicMock,
+        cli_runner: CliRunner,
+        config_file: str,
+    ) -> None:
         """When queue is over specified length, notifications sent by all notifiers."""
         queue_count_patch.return_value = 1
         result = cli_runner.invoke(main, ["-c{}".format(config_file)])
@@ -67,13 +74,13 @@ class TestCli(object):
 
     def test_cli_notify_on_connection(
         self,
-        mock_notifiers,
-        queue_count_patch,
-        config_data,
-        cli_runner,
-        config_file,
-        connector_patch,
-    ):
+        mock_notifiers: tuple,
+        queue_count_patch: MagicMock,
+        config_data: dict,
+        cli_runner: CliRunner,
+        config_file: str,
+        connector_patch: MagicMock,
+    ) -> None:
         """Notifications sent via all notifiers when monitor cannot connect to queue."""
         queue_count_patch.return_value = 1
         connector_patch.side_effect = AMQPConnectionError
@@ -97,7 +104,9 @@ class TestCli(object):
 
     @patch("amqpeek.monitor.time")
     @pytest.mark.usefixtures("connector_patch", "mock_notifiers", "queue_count_patch")
-    def test_cli_wait_and_max_connects(self, time_mock, cli_runner, config_file):
+    def test_cli_wait_and_max_connects(
+        self, time_mock: MagicMock, cli_runner: CliRunner, config_file: str
+    ) -> None:
         """Test the wait times and number of connections params are respected."""
         result = cli_runner.invoke(main, ["-c{}".format(config_file), "-i1", "-m1"])
 
@@ -105,7 +114,13 @@ class TestCli(object):
         time_mock.sleep.assert_called_once_with(1 * 60)
 
     @patch("amqpeek.cli.open")
-    def test_cli_no_config(self, open_patch, mock_notifiers, cli_runner, config_file):
+    def test_cli_no_config(
+        self,
+        open_patch: MagicMock,
+        mock_notifiers: tuple,
+        cli_runner: CliRunner,
+        config_file: str,
+    ) -> None:
         """Test error is raised and program exits when no config file availiable."""
         open_patch.side_effect = IOError
         result = cli_runner.invoke(main)
@@ -117,7 +132,9 @@ class TestCli(object):
             "To generate a base config file use --gen_config.\n"
         )
 
-    def test_create_config(self, mock_notifiers, cli_runner, config_file):
+    def test_create_config(
+        self, mock_notifiers: tuple, cli_runner: CliRunner, config_file: str
+    ) -> None:
         """Test a config file can be created."""
         with cli_runner.isolated_filesystem():
             result = cli_runner.invoke(main, ["-g"])
@@ -129,7 +146,9 @@ class TestCli(object):
             "AMQPeek\n"
         )
 
-    def test_create_config_file_exists(self, mock_notifiers, cli_runner, config_file):
+    def test_create_config_file_exists(
+        self, mock_notifiers: tuple, cli_runner: CliRunner, config_file: str
+    ) -> None:
         """Error and exist when attempt to create a config file when one exists."""
         with cli_runner.isolated_filesystem():
             with open("amqpeek.yaml", "w") as f:

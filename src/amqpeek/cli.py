@@ -15,7 +15,7 @@ from .notifier import create_notifiers
 DEFAULT_CONFIG = "amqpeek.yaml"
 
 
-def gen_config_file():
+def gen_config_file() -> None:
     """Genereate a config file from the example template.
 
     Raises:
@@ -29,20 +29,20 @@ def gen_config_file():
     copyfile(config_file, DEFAULT_CONFIG)
 
 
-def read_config(config):
+def read_config(config_file_name: str) -> None:
     """Read the AMQPeek config from the given file.
 
     Args:
-        config: The config file to read from
+        config_file_name: The config file to read from
 
     Returns:
         A map containing all the config data
     """
-    with open(config, "r") as config_file:
+    with open(config_file_name, "r") as config_file:
         return yaml.load(config_file, Loader=yaml.SafeLoader)
 
 
-def configure_logging(verbosity):
+def configure_logging(verbosity: int) -> None:
     """Sets the logging verbosity for the session.
 
     Args:
@@ -54,7 +54,7 @@ def configure_logging(verbosity):
         logging.basicConfig(format="%(message)s", level=logging.ERROR)
 
 
-def build_queue_data(app_config):
+def build_queue_data(app_config: dict) -> None:
     """Creates a list of tuples containing queue name and limit pairs.
 
     Args:
@@ -110,7 +110,9 @@ def build_queue_data(app_config):
     is_flag=True,
     help="Create a basic configuration file and place it in your current directory",
 )
-def main(config, interval, verbosity, max_tests, gen_config):
+def main(
+    config: str, interval: float, verbosity: int, max_tests: int, gen_config: bool
+) -> None:
     """Entry point for AMQPeek - Simple, flexible RMQ monitor.
 
     Args:

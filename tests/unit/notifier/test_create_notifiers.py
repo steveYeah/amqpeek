@@ -4,6 +4,7 @@ from collections import OrderedDict
 from unittest.mock import patch
 
 import pytest
+
 from amqpeek.notifier import create_notifiers, SlackNotifier, SmtpNotifier
 
 
@@ -11,7 +12,7 @@ class TestNotifierFactory(object):
     """Tests for the notifier factory."""
 
     @pytest.fixture
-    def notifier_data(self):
+    def notifier_data(self) -> dict:
         """Mock notifier config."""
         data = {
             "smtp": {
@@ -32,7 +33,9 @@ class TestNotifierFactory(object):
 
         return ordered_data
 
-    def test_create_notifiers_returns_correct_notifiers(self, notifier_data):
+    def test_create_notifiers_returns_correct_notifiers(
+        self, notifier_data: dict
+    ) -> None:
         """Test the correct notifier objects are returned for the given config."""
         # We have to patch SMTP as a connection is established on
         # instantiation
@@ -43,7 +46,7 @@ class TestNotifierFactory(object):
         assert isinstance(notifiers[0], SlackNotifier)
         assert isinstance(notifiers[1], SmtpNotifier)
 
-    def tests_create_notifiers_with_no_data_returns_empty_tuple(self):
+    def tests_create_notifiers_with_no_data_returns_empty_tuple(self) -> None:
         """Test create norifiers with empty config."""
         notifiers = create_notifiers({})
 

@@ -3,7 +3,10 @@ import logging
 import time
 
 from pika import BlockingConnection, ConnectionParameters, PlainCredentials
+from pika.channel import Channel
 from pika.exceptions import AMQPConnectionError, ChannelClosed
+
+from amqpeek.notifier import Notifier
 
 
 class Connector(object):
@@ -12,7 +15,9 @@ class Connector(object):
     Holds credentials for continued connection drop and reconnect.
     """
 
-    def __init__(self, host, port, vhost, user, passwd):
+    def __init__(
+        self, host: str, port: int, vhost: str, user: str, passwd: str
+    ) -> None:
         """Create Connector with given config.
 
         Args:
@@ -28,7 +33,7 @@ class Connector(object):
         self.user = user
         self.passwd = passwd
 
-    def connect(self):
+    def connect(self) -> BlockingConnection:
         """Create blocking connection in RMQ.
 
         Returns:
@@ -47,7 +52,13 @@ class Connector(object):
 class Monitor(object):
     """Handles connection to RMQ, test of queues and sending notifications."""
 
-    def __init__(self, connector, queue_details, interval=None, max_connections=None):
+    def __init__(
+        self,
+        connector: Connector,
+        queue_details: dict,
+        interval: int = None,
+        max_connections: int = None,
+    ) -> None:
         """Creates a Monitor with the given parameters.
 
         Args:
@@ -64,7 +75,7 @@ class Monitor(object):
         self.connection_count = 0
         self.notifiers = []
 
-    def add_notifier(self, notifier):
+    def add_notifier(self, notifier: Notifier) -> None:
         """Adds a notifier to this monitor that will be used to send notifications to.
 
         Args:
@@ -72,7 +83,7 @@ class Monitor(object):
         """
         self.notifiers.append(notifier)
 
-    def run(self):
+    def run(self) -> None:
         """Main execution loop."""
         while True:
             try:
@@ -98,7 +109,7 @@ class Monitor(object):
             else:
                 return
 
-    def check_queues(self, connection, queue_details):
+    def check_queues(self, connection: BlockingConnection, queue_details: dict) -> None:
         """Check number of messages in queues are within limits.
 
         Args:
@@ -135,7 +146,7 @@ class Monitor(object):
                 logging.info("%s - %s", subject, message)
                 self.notify(subject, message)
 
-    def notify(self, subject, message):
+    def notify(self, subject: str, message: str) -> None:
         """Main entry point for sending notifications using this monitors notifiers.
 
         Args:
@@ -145,7 +156,7 @@ class Monitor(object):
         for notifier in self.notifiers:
             notifier.notify(subject, message)
 
-    def connect_to_queue(self, channel, queue_name):
+    def connect_to_queue(self, channel: Channel, queue_name: str) -> None:
         """Connect to the given queue on the given channel.
 
         Args:
@@ -158,7 +169,7 @@ class Monitor(object):
         """
         return channel.queue_declare(queue=queue_name, passive=True)
 
-    def get_channel(self, connection):
+    def get_channel(self, connection: BlockingConnection) -> Channel:
         """Get the channel from the given connection.
 
         Args:
@@ -169,7 +180,7 @@ class Monitor(object):
         """
         return connection.channel()
 
-    def get_queue_message_count(self, queue):
+    def get_queue_message_count(self, queue: str) -> int:
         """Get the number of messages on the given queue at time of connection.
 
         Args:

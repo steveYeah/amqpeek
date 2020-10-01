@@ -1,7 +1,8 @@
 """Tests the create config command."""
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
+
 from amqpeek.cli import gen_config_file
 from amqpeek.exceptions import ConfigExistsError
 
@@ -10,7 +11,7 @@ class TestGenConfigFile:
     """Tests the gen config command."""
 
     @patch("amqpeek.cli.os.path.exists")
-    def test_file_already_exists(self, path_exists_patch):
+    def test_file_already_exists(self, path_exists_patch: MagicMock) -> None:
         """Test correct exception is raised then the config file already exists."""
         path_exists_patch.return_value = True
 
@@ -20,7 +21,12 @@ class TestGenConfigFile:
     @patch("amqpeek.cli.os.path.exists")
     @patch("amqpeek.cli.copyfile")
     @patch("amqpeek.cli.os.path.dirname")
-    def test_file_created(self, path_dirname_patch, copyfile_patch, path_exists_patch):
+    def test_file_created(
+        self,
+        path_dirname_patch: MagicMock,
+        copyfile_patch: MagicMock,
+        path_exists_patch: MagicMock,
+    ) -> None:
         """Test the file is actually created."""
         path_exists_patch.return_value = False
         this_file = "current_file_location"

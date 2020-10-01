@@ -6,7 +6,7 @@ import yaml
 
 
 @pytest.fixture
-def config_data():
+def config_data() -> dict:
     """Dummy config data."""
     return {
         "rabbit_connection": {
@@ -33,7 +33,7 @@ def config_data():
 
 
 @pytest.yield_fixture
-def config_file(config_data):
+def config_file(config_data: dict) -> str:
     """Creates a temporary config file used by the tests."""
     # TODO: Use the tempfile module
     test_config_name = "test_config.yaml"

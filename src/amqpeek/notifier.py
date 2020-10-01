@@ -4,7 +4,7 @@ from smtplib import SMTP
 from slacker import Slacker
 
 
-def create_notifiers(notifier_data):
+def create_notifiers(notifier_data: dict) -> tuple:
     """Create the notifiers specificed in the given map.
 
     Args:
@@ -25,7 +25,7 @@ def create_notifiers(notifier_data):
 class Notifier(object):
     """Base Notifier class."""
 
-    def notify(self, subject, message):
+    def notify(self, subject: str, message: str) -> None:
         """Send notifications.
 
         Args:
@@ -46,7 +46,15 @@ class SmtpNotifier(Notifier):
     {message}
     """
 
-    def __init__(self, host, to_addr, from_addr, subject, user=None, passwd=None):
+    def __init__(
+        self,
+        host: str,
+        to_addr: str,
+        from_addr: str,
+        subject: str,
+        user: str = None,
+        passwd: str = None,
+    ) -> None:
         """Creates an SMTP notifier with the given parameters.
 
         Args:
@@ -68,7 +76,7 @@ class SmtpNotifier(Notifier):
         if self.user is not None:
             self.server.login(self.user, self.passwd)
 
-    def notify(self, subject, message):
+    def notify(self, subject: str, message: str) -> None:
         """Send notification via email.
 
         Args:
@@ -92,7 +100,7 @@ class SmtpNotifier(Notifier):
 class SlackNotifier(Notifier):
     """Send notifications via Slack."""
 
-    def __init__(self, api_key, username, channel):
+    def __init__(self, api_key: str, username: str, channel: str) -> None:
         """Create a Slack notifier with the given parameters.
 
         Args:
@@ -104,7 +112,7 @@ class SlackNotifier(Notifier):
         self.channel = channel
         self.slack = Slacker(api_key)
 
-    def notify(self, subject, message):
+    def notify(self, subject: str, message: str) -> None:
         """Send notification via Slack.
 
         Args:

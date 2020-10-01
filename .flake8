@@ -1,5 +1,5 @@
 [flake8]
-application-import-names = anqpeek,tests
+application-import-names = amqpeek,tests
 import-order-style = smarkets
 docstring-convention = google
 select = ANN,B,B9,BLK,C,D,DAR,E,F,I,S,W

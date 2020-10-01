@@ -3,6 +3,7 @@
 from unittest.mock import patch
 
 import pytest
+
 from amqpeek.notifier import SmtpNotifier
 
 
@@ -10,7 +11,7 @@ class TestSmtpNotifier(object):
     """Tests for the SmtpNotifier class."""
 
     @pytest.fixture
-    def smtp_notifier_args(self):
+    def smtp_notifier_args(self) -> dict:
         """SMTP server args."""
         return {
             "host": "localhost",
@@ -22,13 +23,13 @@ class TestSmtpNotifier(object):
         }
 
     @pytest.fixture
-    def smtp_notifier(self, smtp_notifier_args):
+    def smtp_notifier(self, smtp_notifier_args: dict) -> SmtpNotifier:
         """Patch the SmtpNotifier."""
         with patch("amqpeek.notifier.SMTP"):
             return SmtpNotifier(**smtp_notifier_args)
 
     @pytest.fixture
-    def mail_message(self, smtp_notifier_args, message_args):
+    def mail_message(self, smtp_notifier_args: dict, message_args: dict) -> str:
         """A mail message for use in tests."""
         return SmtpNotifier.MAIL_TEMPLATE.format(
             from_addr=smtp_notifier_args["from_addr"],
@@ -40,16 +41,16 @@ class TestSmtpNotifier(object):
         )
 
     def test_smtp_login_called_when_credentials_present(
-        self, smtp_notifier, smtp_notifier_args
-    ):
+        self, smtp_notifier: SmtpNotifier, smtp_notifier_args: dict
+    ) -> None:
         """Test Notifier logs in into SMTP server correctly."""
         smtp_notifier.server.login.assert_called_once_with(
             smtp_notifier_args["user"], smtp_notifier_args["passwd"]
         )
 
     def test_smtp_login_not_called_when_credentials_not_present(
-        self, smtp_notifier_args
-    ):
+        self, smtp_notifier_args: dict
+    ) -> None:
         """Test SMTP login does not occur if not creds provided."""
         del smtp_notifier_args["user"]
         del smtp_notifier_args["passwd"]
@@ -59,7 +60,7 @@ class TestSmtpNotifier(object):
 
         smtp_notifier.server.login.assert_not_called()
 
-    def test_notify(self, smtp_notifier, mail_message):
+    def test_notify(self, smtp_notifier: SmtpNotifier, mail_message: str) -> None:
         """Test notify method calls the SMTP server."""
         smtp_notifier.notify(subject="Test message", message="This is a test message")
 
