@@ -32,7 +32,7 @@ class TestGenConfigFile:
         this_file = "current_file_location"
 
         path_dirname_patch.return_value = this_file
-        config_file = "{0}/../../config/amqpeek.yaml".format(this_file)
+        config_file = "{0}/../amqpeek-config/amqpeek.yaml".format(this_file)
 
         gen_config_file()
 
