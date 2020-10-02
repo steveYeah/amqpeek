@@ -1,3 +1,8 @@
+"""A Template for the base config."""
+
+DEFAULT_LOCATION = "amqpeek.yaml"
+
+BASE_CONFIG = """
 # RMQ connection details
 rabbit_connection: {
   user: guest,
@@ -62,3 +67,4 @@ notifiers:
       username: ampeek,
       channel: '#general'
   }
+"""

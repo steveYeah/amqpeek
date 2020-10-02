@@ -3,17 +3,15 @@
 import logging
 import os
 import sys
-from shutil import copyfile
 from typing import List
 
 import click
 import yaml
 
+from .base_config import BASE_CONFIG, DEFAULT_LOCATION
 from .exceptions import ConfigExistsError
 from .monitor import Connector, Monitor
 from .notifier import create_notifiers
-
-DEFAULT_CONFIG = "amqpeek.yaml"
 
 
 def gen_config_file() -> None:
@@ -22,12 +20,11 @@ def gen_config_file() -> None:
     Raises:
         ConfigExistsError: When the config already exists
     """
-    if os.path.exists(DEFAULT_CONFIG):
+    if os.path.exists(DEFAULT_LOCATION):
         raise ConfigExistsError("File already exists")
 
-    this_file = os.path.dirname(os.path.realpath(__file__))
-    config_file = "{0}/../amqpeek-config/amqpeek.yaml".format(this_file)
-    copyfile(config_file, DEFAULT_CONFIG)
+    with open(DEFAULT_LOCATION, "w") as cf:
+        cf.write(BASE_CONFIG)
 
 
 def read_config(config_file_name: str) -> dict:
@@ -84,7 +81,7 @@ def build_queue_data(app_config: dict) -> List[tuple]:
 @click.option(
     "--config",
     "-c",
-    default=DEFAULT_CONFIG,
+    default=DEFAULT_LOCATION,
     help=(
         "Location of configuration file to use "
         '(defaults to "amqpeek.yaml" in current directory)'
